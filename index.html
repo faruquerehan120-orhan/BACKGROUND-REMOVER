@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#090D16" />
+  <title>CutOut Pro — Instant Background Remover & Transparent PNG Studio</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', ' system-ui', 'sans-serif'] },
+          colors: {
+            slate950: '#090D16',
+            slate900: '#0F172A',
+            slate850: '#131B2E',
+            slate800: '#1E293B',
+            slate700: '#334155',
+            cyanAccent: '#06B6D4',
+            cyanLight: '#22D3EE',
+            violetAccent: '#8B5CF6',
+            emeraldSuccess: '#10B981',
+            roseError: '#F43F5E',
+            amberWarn: '#F59E0B'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: #090D16;
+      color: #F1F5F9;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    /* Studio Checkerboard Patterns */
+    .bg-checker-dark {
+      background-color: #1E2638;
+      background-image:
+        linear-gradient(45deg, #141A26 25%, transparent 25%),
+        linear-gradient(-45deg, #141A26 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #141A26 75%),
+        linear-gradient(-45deg, transparent 75%, #141A26 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+    }
+    .bg-checker-light {
+      background-color: #FFFFFF;
+      background-image:
+        linear-gradient(45deg, #E2E8F0 25%, transparent 25%),
+        linear-gradient(-45deg, #E2E8F0 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #E2E8F0 75%),
+        linear-gradient(-45deg, transparent 75%, #E2E8F0 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+    }
+    .bg-studio-gradient {
+      background: radial-gradient(circle at center, #334155 0%, #0F172A 100%);
+    }
+    .hero-border {
+      background: linear-gradient(135deg, #131D33 0%, #192542 50%, #1E1B4B 100%);
+      border: 1px solid rgba(6, 182, 212, 0.45);
+      box-shadow: 0 10px 30px -10px rgba(6, 182, 212, 0.2);
+    }
+    input[type="range"] {
+      accent-color: #06B6D4;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate950 text-slate-100 min-h-screen flex flex-col md:flex-row select-none">
+
+  <!-- Hidden File Inputs -->
+  <input type="file" id="singleFileInput" accept="image/*" class="hidden" />
+  <input type="file" id="batchFileInput" accept="image/*" multiple class="hidden" />
+
+  <!-- Desktop / Tablet Side Navigation Rail -->
+  <aside class="hidden md:flex flex-col items-center w-20 bg-slate900 border-r border-slate-800/80 py-5 shrink-0 z-30">
+    <div class="w-11 h-11 rounded-2xl bg-cyanAccent flex items-center justify-center text-black shadow-lg shadow-cyanAccent/25 mb-8">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>
+      </svg>
+    </div>
+
+    <nav class="flex flex-col gap-4 w-full px-2">
+      <button id="railHomeBtn" type="button" class="nav-btn flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl transition-all">
+        <span class="nav-pill px-4 py-1 rounded-full flex items-center justify-center mb-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+        </span>
+        <span class="text-[11px] font-semibold">Home</span>
+      </button>
+
+      <button id="railSingleBtn" type="button" class="nav-btn flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl transition-all">
+        <span class="nav-pill px-4 py-1 rounded-full flex items-center justify-center mb-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>
+          </svg>
+        </span>
+        <span class="text-[11px] font-semibold">Cutout</span>
+      </button>
+
+      <button id="railBatchBtn" type="button" class="nav-btn flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl transition-all relative">
+        <span class="nav-pill px-4 py-1 rounded-full flex items-center justify-center mb-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
+        </span>
+        <span class="text-[11px] font-semibold">Batch</span>
+        <span id="railBatchBadge" class="hidden absolute top-1.5 right-2 bg-violetAccent text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col min-h-screen pb-16 md:pb-0 relative overflow-hidden">
+
+    <!-- ==================== SCREEN 1: HOME ==================== -->
+    <section id="screenHome" class="flex-1 overflow-y-auto px-4 sm:px-8 py-6 max-w-4xl mx-auto w-full">
+      <!-- Hero Studio Banner -->
+      <div class="hero-border rounded-3xl p-5 sm:p-7 mb-7">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-full bg-cyanAccent flex items-center justify-center text-black shadow-md shadow-cyanAccent/30 shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+                <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">CutOut Pro</h1>
+              <p class="text-xs sm:text-sm text-slate-400">Instant Background Remover &amp; Transparent PNG Studio</p>
+            </div>
+          </div>
+
+          <button id="installPwaBtn" type="button" class="hidden px-4 py-2 rounded-xl bg-cyanAccent text-black font-bold text-xs flex items-center gap-1.5 hover:bg-cyanLight transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Install App
+          </button>
+        </div>
+
+        <!-- Feature Badges -->
+        <div class="flex flex-wrap gap-2 mt-5">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 text-xs font-medium text-white">
+            <span class="text-cyanLight">✨</span> Smart Auto Cutout
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 text-xs font-medium text-white">
+            <span class="text-cyanLight">💎</span> High-Res Lossless
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 text-xs font-medium text-white">
+            <span class="text-cyanLight">⚡</span> Ultra-Fast Speed
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 text-xs font-medium text-white">
+            <span class="text-cyanLight">🗂️</span> Bulk Batch Mode
+          </span>
+        </div>
+      </div>
+
+      <!-- Main Action Cards -->
+      <h2 class="text-base font-bold text-white mb-3">Create Cutout</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-8">
+        <!-- Single Photo Tile -->
+        <button id="homeSingleUploadBtn" type="button" class="text-left bg-slate850 hover:bg-slate800/90 border border-slate-800 hover:border-cyanAccent/60 rounded-2xl p-5 transition-all group">
+          <div class="w-12 h-12 rounded-full bg-cyanAccent/15 text-cyanAccent flex items-center justify-center mb-3.5 group-hover:scale-105 transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <div class="text-base font-bold text-white">Single Photo</div>
+          <div class="text-xs text-slate-400 mt-0.5">Upload &amp; live interactive preview</div>
+        </button>
+
+        <!-- Batch Cutout Tile -->
+        <button id="homeBatchUploadBtn" type="button" class="text-left bg-slate850 hover:bg-slate800/90 border border-slate-800 hover:border-violetAccent/60 rounded-2xl p-5 transition-all group">
+          <div class="w-12 h-12 rounded-full bg-violetAccent/15 text-violetAccent flex items-center justify-center mb-3.5 group-hover:scale-105 transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+          </div>
+          <div class="text-base font-bold text-white">Batch Cutout</div>
+          <div class="text-xs text-slate-400 mt-0.5">Process multiple files in bulk</div>
+        </button>
+      </div>
+
+      <!-- Instant Sample Presets -->
+      <div class="flex items-center justify-between mb-3.5">
+        <div>
+          <h2 class="text-base font-bold text-white">Try Sample Photos</h2>
+          <p class="text-xs text-slate-400">Test instant background removal in 1 click</p>
+        </div>
+      </div>
+
+      <div id="samplePresetsList" class="flex flex-col gap-2.5 mb-8">
+        <!-- Populated dynamically from SamplePresets -->
+      </div>
+
+      <!-- How It Works Info Card -->
+      <div class="bg-slate850 border border-slate-800/80 rounded-2xl p-5 mb-6">
+        <h3 class="text-sm font-bold text-white mb-3.5">✨ How CutOut Pro Works</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-slate800 text-cyanAccent text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+            <div>
+              <div class="text-xs font-semibold text-white">Select or Drop Photos</div>
+              <div class="text-[11px] text-slate-400">Upload any product, portrait, or logo photo</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-slate800 text-cyanAccent text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+            <div>
+              <div class="text-xs font-semibold text-white">Automatic Cutout</div>
+              <div class="text-[11px] text-slate-400">Perimeter saliency separates foreground with smooth anti-aliased edges</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-slate800 text-cyanAccent text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+            <div>
+              <div class="text-xs font-semibold text-white">Preview &amp; Refine</div>
+              <div class="text-[11px] text-slate-400">Use split comparison, tweak sensitivity or touch up with magic eraser</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-slate800 text-cyanAccent text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
+            <div>
+              <div class="text-xs font-semibold text-white">Export Transparent PNG</div>
+              <div class="text-[11px] text-slate-400">Download full-resolution PNG or share anywhere</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 2: SINGLE CUTOUT STUDIO ==================== -->
+    <section id="screenSingle" class="hidden flex-1 flex flex-col h-full overflow-hidden bg-slate950">
+      <!-- Studio Top Bar -->
+      <header class="flex items-center justify-between px-3 sm:px-5 py-2.5 bg-slate900 border-b border-slate-800/80 shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <button id="singleBackBtn" type="button" class="p-2 rounded-full hover:bg-slate800 text-white transition" title="Back to Home">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          </button>
+          <div class="min-w-0">
+            <div id="singleTitle" class="text-sm sm:text-base font-bold text-white truncate">Cutout Preview</div>
+            <div class="flex items-center gap-2">
+              <span id="singleDims" class="text-[11px] text-slate-400">800 × 800</span>
+              <span id="singleSpeedBadge" class="px-2 py-0.5 rounded-md bg-cyanAccent/20 text-cyanLight text-[10px] font-semibold">⚡ 12ms</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="singleShareBtn" type="button" class="p-2 rounded-full hover:bg-slate800 text-white transition" title="Share Cutout PNG">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+          </button>
+          <button id="singleTopSaveBtn" type="button" class="px-3.5 py-1.5 rounded-2xl bg-cyanAccent hover:bg-cyanLight text-black font-bold text-xs flex items-center gap-1.5 transition shadow-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Save
+          </button>
+        </div>
+      </header>
+
+      <!-- Processing Banner -->
+      <div id="singleProcessingBanner" class="hidden bg-cyanAccent/20 text-cyanLight text-xs py-1.5 px-4 flex items-center justify-center gap-2 shrink-0">
+        <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+        <span>Processing high-res cutout...</span>
+      </div>
+
+      <!-- Interactive Split Comparison & Viewport -->
+      <div id="previewViewport" class="relative flex-1 bg-black overflow-hidden flex items-center justify-center min-h-[280px]">
+        <!-- Backdrop container -->
+        <div id="studioBackdropBox" class="relative w-full h-full flex items-center justify-center bg-checker-dark overflow-hidden">
+          <!-- Transform wrapper for zoom/pan -->
+          <div id="zoomTransformBox" class="relative flex items-center justify-center max-w-full max-h-full transition-transform duration-75" style="transform-origin: center center;">
+            <!-- Cutout Canvas (Full) -->
+            <canvas id="cutoutCanvas" class="max-w-full max-h-[56vh] object-contain block pointer-events-none"></canvas>
+            <!-- Original Canvas (Clipped for Split Comparison) -->
+            <canvas id="originalOverlayCanvas" class="max-w-full max-h-[56vh] object-contain block absolute inset-0 pointer-events-none"></canvas>
+          </div>
+        </div>
+
+        <!-- Split Comparison Divider Line & Draggable Handle -->
+        <div id="splitDividerLine" class="absolute top-0 bottom-0 w-0.5 bg-white shadow-[1px_0_4px_rgba(0,0,0,0.6)] pointer-events-none" style="left: 50%;">
+          <div id="splitHandleBtn" class=" pointer-events-auto absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-cyanAccent border-[2.5px] border-white shadow-xl flex items-center justify-center cursor-ew-resize touch-none">
+            <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7l-5 5m0 0l5 5m-5-5h18m-5-5l5 5m0 0l-5 5"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Status Pill Badges -->
+        <div id="splitBadgePill" class="absolute top-3 left-1/2 -translate-x-1/2 px-3.5 py-1 rounded-full bg-slate900/80 backdrop-blur border border-slate-700/60 text-[11px] font-semibold flex items-center gap-2 pointer-events-none">
+          <span class="text-slate-400">ORIGINAL</span>
+          <span class="text-slate-600">|</span>
+          <span class="text-cyanAccent">TRANSPARENT PNG</span>
+        </div>
+
+        <!-- Eyedropper Hint Pill -->
+        <div id="eyedropperHintPill" class="hidden absolute bottom-3 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-violetAccent/90 text-white text-xs font-semibold shadow-lg pointer-events-none">
+          🎯 Tap anywhere on the image to pick background color
+        </div>
+
+        <!-- Zoom Controls -->
+        <div class="absolute top-3 right-3 flex items-center gap-1.5">
+          <button id="zoomInBtn" type="button" class="w-8 h-8 rounded-full bg-slate900/85 hover:bg-slate800 text-white text-sm font-bold flex items-center justify-center border border-slate-700/60" title="Zoom In">+</button>
+          <button id="zoomOutBtn" type="button" class="w-8 h-8 rounded-full bg-slate900/85 hover:bg-slate800 text-white text-sm font-bold flex items-center justify-center border border-slate-700/60" title="Zoom Out">−</button>
+          <button id="zoomResetBtn" type="button" class="hidden px-2.5 h-8 rounded-full bg-slate900/85 hover:bg-slate800 text-cyanLight text-xs font-semibold flex items-center justify-center border border-slate-700/60" title="Reset Zoom">100%</button>
+        </div>
+      </div>
+
+      <!-- Preview Studio Bottom Toolbar -->
+      <div class="bg-slate850 border-t border-slate-800 px-4 py-3 shrink-0 overflow-y-auto max-h-[48vh]">
+        <!-- Background Switcher Row -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+          <svg class="w-4 h-4 text-slate-400 shrink-0 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+          <button type="button" data-bg="CHECKERBOARD_DARK" class="bg-chip px-3 py-1 rounded-xl text-xs font-bold bg-cyanLight text-black shrink-0">Dark Grid</button>
+          <button type="button" data-bg="CHECKERBOARD_LIGHT" class="bg-chip px-3 py-1 rounded-xl text-xs font-medium bg-slate800 text-white shrink-0">Light Grid</button>
+          <button type="button" data-bg="PURE_WHITE" class="bg-chip px-3 py-1 rounded-xl text-xs font-medium bg-slate800 text-white shrink-0">White</button>
+          <button type="button" data-bg="PURE_BLACK" class="bg-chip px-3 py-1 rounded-xl text-xs font-medium bg-slate800 text-white shrink-0">Black</button>
+          <button type="button" data-bg="STUDIO_GRADIENT" class="bg-chip px-3 py-1 rounded-xl text-xs font-medium bg-slate800 text-white shrink-0">Studio Gradient</button>
+
+          <!-- Custom Color Dots -->
+          <button type="button" data-bgcolor="#06B6D4" class="bg-dot w-6 h-6 rounded-full shrink-0 border-2 border-transparent" style="background:#06B6D4;" title="Cyan Backdrop"></button>
+          <button type="button" data-bgcolor="#8B5CF6" class="bg-dot w-6 h-6 rounded-full shrink-0 border-2 border-transparent" style="background:#8B5CF6;" title="Violet Backdrop"></button>
+          <button type="button" data-bgcolor="#10B981" class="bg-dot w-6 h-6 rounded-full shrink-0 border-2 border-transparent" style="background:#10B981;" title="Emerald Backdrop"></button>
+          <button type="button" data-bgcolor="#F43F5E" class="bg-dot w-6 h-6 rounded-full shrink-0 border-2 border-transparent" style="background:#F43F5E;" title="Rose Backdrop"></button>
+        </div>
+
+        <!-- Tool Action Row -->
+        <div class="flex flex-wrap items-center gap-2 mt-2">
+          <button id="toggleSplitViewBtn" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate800 text-cyanLight border border-cyanAccent/40 flex items-center gap-1.5 transition">
+            <span>⇄</span> Split View
+          </button>
+
+          <button id="toggleTuningPanelBtn" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate800 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition">
+            <span>⚙️</span> Adjust
+          </button>
+
+          <button id="openTouchUpBtn" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate800 text-slate-200 border border-slate-700 hover:border-cyanAccent flex items-center gap-1.5 transition">
+            <span>🖌️</span> Touch Up
+          </button>
+
+          <button id="eyedropperToggleBtn" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate800 text-slate-200 border border-slate-700 hover:border-violetAccent flex items-center gap-1.5 transition" title="Pick target background color from image">
+            <span>🎯</span> Pick Bg Color
+          </button>
+
+          <div class="flex-1"></div>
+
+          <button id="changePhotoBtn" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate800 hover:bg-slate700 text-slate-300 flex items-center gap-1.5 transition" title="Select new photo">
+            <span>🖼️</span> New Photo
+          </button>
+        </div>
+
+        <!-- Expandable Tuning Panel -->
+        <div id="tuningPanelBox" class="hidden mt-3 bg-slate900 border border-slate-800 rounded-2xl p-3.5 space-y-3">
+          <div>
+            <div class="text-[11px] font-bold text-slate-400 mb-1.5">Cutout Mode</div>
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" data-mode="AUTO_SMART" class="mode-chip py-1.5 px-2 rounded-xl text-xs font-bold bg-cyanAccent text-black transition">Smart Auto</button>
+              <button type="button" data-mode="STUDIO_SOLID" class="mode-chip py-1.5 px-2 rounded-xl text-xs font-medium bg-slate800 text-slate-300 transition">Color / Studio</button>
+              <button type="button" data-mode="HIGH_CONTRAST" class="mode-chip py-1.5 px-2 rounded-xl text-xs font-medium bg-slate800 text-slate-300 transition">High Contrast</button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <label for="toleranceSlider" id="toleranceLabel" class="text-xs text-white w-28 shrink-0">Sensitivity: 35%</label>
+            <input id="toleranceSlider" type="range" min="5" max="90" value="35" class="flex-1 h-1.5 bg-slate800 rounded-lg cursor-pointer" />
+          </div>
+
+          <div class="flex items-center gap-3">
+            <label for="featherSlider" id="featherLabel" class="text-xs text-white w-28 shrink-0">Soft Edge: 3px</label>
+            <input id="featherSlider" type="range" min="0" max="12" value="3" class="flex-1 h-1.5 bg-slate800 rounded-lg cursor-pointer" />
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <span class="text-xs text-slate-400">Invert Selection (Keep Background)</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="invertMaskToggle" class="sr-only peer" />
+              <div class="w-9 h-5 bg-slate700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-cyanAccent"></div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Primary Download Button -->
+        <button id="downloadPngMainBtn" type="button" class="mt-3 w-full h-12 rounded-2xl bg-cyanAccent hover:bg-cyanLight text-black font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-cyanAccent/20 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Download Transparent PNG
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== OVERLAY: TOUCH UP CANVAS ==================== -->
+    <section id="touchUpModal" class="hidden fixed inset-0 z-50 bg-[#0B101D] flex flex-col">
+      <!-- Top Bar -->
+      <div class="flex items-center justify-between px-4 py-3 bg-slate900/90 border-b border-slate-800">
+        <button id="touchUpCancelBtn" type="button" class="w-10 h-10 rounded-full bg-slate800 hover:bg-slate700 text-white flex items-center justify-center" title="Cancel">
+          ✕
+        </button>
+        <div class="text-sm font-bold text-white">Touch Up Mask (Eraser &amp; Restore)</div>
+        <div class="flex items-center gap-2">
+          <button id="touchUpUndoBtn" type="button" class="px-3 py-1.5 rounded-full bg-slate800 hover:bg-slate700 text-xs font-semibold text-white">
+            ↶ Undo
+          </button>
+          <button id="touchUpClearBtn" type="button" class="px-3 py-1.5 rounded-full bg-slate800 hover:bg-slate700 text-xs font-semibold text-roseError">
+            Reset
+          </button>
+          <button id="touchUpApplyBtn" type="button" class="px-4 py-1.5 rounded-full bg-cyanAccent hover:bg-cyanLight text-black font-bold text-xs flex items-center gap-1">
+            ✓ Apply Edits
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Paint Area -->
+      <div class="flex-1 bg-checker-dark flex items-center justify-center overflow-hidden p-4 relative">
+        <canvas id="touchUpCanvasEl" class="max-w-full max-h-[68vh] object-contain cursor-crosshair touch-none shadow-2xl border border-slate-700/60"></canvas>
+      </div>
+
+      <!-- Bottom Brush Controls -->
+      <div class="bg-slate900 border-t border-slate-800 px-5 py-4 rounded-t-3xl space-y-3">
+        <div class="flex items-center gap-3">
+          <button id="toolEraserBtn" type="button" class="px-4 py-2 rounded-xl text-xs font-bold bg-roseError text-white flex items-center gap-1.5">
+            🧹 Magic Eraser
+          </button>
+          <button id="toolRestoreBtn" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate800 text-slate-300 flex items-center gap-1.5">
+            ✨ Restore Brush
+          </button>
+        </div>
+        <div class="flex items-center gap-3">
+          <span id="brushSizeLabel" class="text-xs text-white w-24 shrink-0">Size: 24px</span>
+          <input id="brushSizeSlider" type="range" min="8" max="60" value="24" class="flex-1 h-1.5 bg-slate800 rounded-lg cursor-pointer" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 3: BATCH CUTOUT STUDIO ==================== -->
+    <section id="screenBatch" class="hidden flex-1 flex flex-col h-full overflow-y-auto bg-slate950">
+      <!-- Top Bar -->
+      <header class="flex items-center justify-between px-4 py-3 bg-slate900 border-b border-slate-800/80 shrink-0">
+        <div class="flex items-center gap-2">
+          <button id="batchBackBtn" type="button" class="p-2 rounded-full hover:bg-slate800 text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          </button>
+          <div>
+            <div class="text-base font-bold text-white">Bulk Batch Studio</div>
+            <div id="batchQueueCountSubtitle" class="text-xs text-slate-400">0 items in queue</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="batchClearBtn" type="button" class="hidden px-3 py-1.5 rounded-xl bg-slate800 hover:bg-roseError/20 text-slate-300 hover:text-roseError text-xs font-semibold transition">
+            🗑️ Clear
+          </button>
+          <button id="batchAddMoreBtn" type="button" class="px-3.5 py-1.5 rounded-xl bg-cyanAccent hover:bg-cyanLight text-black font-bold text-xs flex items-center gap-1 transition">
+            + Add Photos
+          </button>
+        </div>
+      </header>
+
+      <!-- Batch Summary Banner -->
+      <div id="batchSummaryCard" class="hidden mx-4 sm:mx-6 mt-4 bg-slate850 border border-slate-800 rounded-2xl p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span id="batchStatusHeading" class="text-sm font-bold text-white">Queue Summary</span>
+          <span id="batchAvgSpeedBadge" class="hidden px-2.5 py-0.5 rounded-lg bg-cyanAccent/20 text-cyanLight text-xs font-semibold">⚡ Avg 14ms/img</span>
+        </div>
+
+        <div id="batchProgressBarWrap" class="hidden w-full h-1.5 bg-slate800 rounded-full overflow-hidden my-2.5">
+          <div id="batchProgressBar" class="h-full bg-cyanAccent transition-all duration-200" style="width: 0%;"></div>
+        </div>
+
+        <div class="flex flex-wrap gap-2.5 my-3">
+          <div class="px-3 py-1 rounded-xl bg-slate800 text-xs"><span class="text-slate-400">Total: </span><strong id="statTotal" class="text-white">0</strong></div>
+          <div class="px-3 py-1 rounded-xl bg-slate800 text-xs"><span class="text-slate-400">Done: </span><strong id="statDone" class="text-emeraldSuccess">0</strong></div>
+          <div class="px-3 py-1 rounded-xl bg-slate800 text-xs"><span class="text-slate-400">Pending: </span><strong id="statPending" class="text-amberWarn">0</strong></div>
+        </div>
+
+        <div class="flex flex-wrap gap-2.5 mt-3">
+          <button id="batchProcessAllBtn" type="button" class="flex-1 py-2.5 px-4 rounded-xl bg-cyanAccent hover:bg-cyanLight text-black font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition">
+            ▶ Process All
+          </button>
+          <button id="batchExportAllBtn" type="button" class="hidden flex-1 py-2.5 px-4 rounded-xl bg-emeraldSuccess hover:bg-emerald-400 text-black font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition">
+            ⬇ Export All PNGs
+          </button>
+        </div>
+      </div>
+
+      <!-- Empty Batch State -->
+      <div id="batchEmptyState" class="flex-1 flex flex-col items-center justify-center text-center p-8">
+        <div class="w-16 h-16 rounded-full bg-slate850 border border-slate-800 flex items-center justify-center text-cyanAccent mb-4">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
+        </div>
+        <h3 class="text-base font-bold text-white">Batch Queue is Empty</h3>
+        <p class="text-xs text-slate-400 max-w-xs mt-1 mb-6">Select multiple photos from your device to remove backgrounds in bulk with 1 click.</p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button id="batchSelectEmptyBtn" type="button" class="px-5 py-2.5 rounded-2xl bg-cyanAccent hover:bg-cyanLight text-black font-bold text-xs sm:text-sm transition">
+            + Select Multiple Photos
+          </button>
+          <button id="batchLoadSamplesBtn" type="button" class="px-5 py-2.5 rounded-2xl bg-slate850 hover:bg-slate800 text-cyanLight border border-cyanAccent/40 font-semibold text-xs sm:text-sm transition">
+            ✨ Load 4 Sample Photos
+          </button>
+        </div>
+      </div>
+
+      <!-- Batch Items Grid -->
+      <div id="batchGridContainer" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 p-4 sm:p-6"></div>
+    </section>
+
+    <!-- Toast Notification -->
+    <div id="toastBanner" class="hidden fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl bg-slate800 border border-slate-700 text-white text-xs font-medium shadow-2xl">
+      Notification
+    </div>
+
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-slate900 border-t border-slate-800 flex items-center justify-around z-40">
+    <button id="mobHomeBtn" type="button" class="nav-btn flex flex-col items-center justify-center py-1 px-4">
+      <span class="nav-pill px-4 py-0.5 rounded-full flex items-center justify-center">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      </span>
+      <span class="text-[11px] font-semibold mt-0.5">Home</span>
+    </button>
+
+    <button id="mobSingleBtn" type="button" class="nav-btn flex flex-col items-center justify-center py-1 px-4">
+      <span class="nav-pill px-4 py-0.5 rounded-full flex items-center justify-center">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+      </span>
+      <span class="text-[11px] font-semibold mt-0.5">Cutout</span>
+    </button>
+
+    <button id="mobBatchBtn" type="button" class="nav-btn flex flex-col items-center justify-center py-1 px-4 relative">
+      <span class="nav-pill px-4 py-0.5 rounded-full flex items-center justify-center">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+      </span>
+      <span class="text-[11px] font-semibold mt-0.5">Batch</span>
+      <span id="mobBatchBadge" class="hidden absolute top-1 right-4 bg-violetAccent text-white text-[10px] font-bold px-1.5 rounded-full">0</span>
+    </button>
+  </nav>
+
+  <script>
+    // ==================== SAMPLE PRESETS (Ported from SamplePresets.kt) ====================
+    const SAMPLE_PRESETS = [
+      {
+        id: 'sneaker',
+        title: 'E-Commerce Sneaker',
+        category: 'Product',
+        description: 'Studio shoe with clean contrast backdrop',
+        iconTag: '👟',
+        generate: generateSneakerSample
+      },
+      {
+        id: 'portrait',
+        title: 'Studio Portrait',
+        category: 'Portrait',
+        description: 'Fashion model silhouette on soft backdrop',
+        iconTag: '👤',
+        generate: generatePortraitSample
+      },
+      {
+        id: 'watch',
+        title: 'Luxury Smartwatch',
+        category: 'Gadget',
+        description: 'Metallic timepiece with sharp perimeter',
+        iconTag: '⌚',
+        generate: generateWatchSample
+      },
+      {
+        id: 'logo_sticker',
+        title: 'Neon Brand Badge',
+        category: 'Graphic / Logo',
+        description: 'High contrast sticker on light canvas',
+        iconTag: '⚡',
+        generate: generateLogoSample
+      }
+    ];
+
+    function generateSneakerSample() {
+      const c = document.createElement('canvas');
+      c.width = 800; c.height = 800;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgb(238, 240, 245)';
+      ctx.fillRect(0, 0, 800, 800);
+
+      // Drop shadow
+      ctx.fillStyle = 'rgba(100, 110, 130, 0.18)';
+      ctx.beginPath();
+      ctx.ellipse(420, 590, 260, 30, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Sneaker body
+      const grad = ctx.createLinearGradient(200, 300, 600, 520);
+      grad.addColorStop(0, 'rgb(6, 182, 212)');
+      grad.addColorStop(1, 'rgb(139, 92, 246)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(200, 540);
+      ctx.lineTo(180, 400);
+      ctx.bezierCurveTo(200, 330, 260, 320, 320, 360);
+      ctx.lineTo(420, 420);
+      ctx.bezierCurveTo(480, 460, 620, 480, 660, 510);
+      ctx.bezierCurveTo(670, 540, 640, 560, 600, 560);
+      ctx.lineTo(200, 560);
+      ctx.closePath();
+      ctx.fill();
+
+      // Sneaker sole
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.moveTo(180, 530);
+      ctx.lineTo(640, 530);
+      ctx.bezierCurveTo(660, 550, 650, 575, 610, 575);
+      ctx.lineTo(190, 575);
+      ctx.bezierCurveTo(175, 560, 175, 545, 180, 530);
+      ctx.closePath();
+      ctx.fill();
+
+      // Stripe accent
+      ctx.strokeStyle = 'rgb(244, 63, 94)';
+      ctx.lineWidth = 18;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(280, 430);
+      ctx.quadraticCurveTo(400, 510, 530, 470);
+      ctx.stroke();
+      return c;
+    }
+
+    function generatePortraitSample() {
+      const c = document.createElement('canvas');
+      c.width = 800; c.height = 800;
+      const ctx = c.getContext('2d');
+      const bg = ctx.createLinearGradient(0, 0, 800, 800);
+      bg.addColorStop(0, 'rgb(251, 191, 36)');
+      bg.addColorStop(1, 'rgb(249, 115, 22)');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, 800, 800);
+
+      // Hair / Hat volume
+      ctx.fillStyle = 'rgb(15, 23, 42)';
+      ctx.beginPath();
+      ctx.ellipse(400, 260, 140, 80, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Head
+      ctx.fillStyle = 'rgb(30, 41, 59)';
+      ctx.beginPath();
+      ctx.arc(400, 320, 130, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Sunglasses
+      ctx.fillStyle = 'rgb(34, 211, 238)';
+      ctx.beginPath();
+      ctx.roundRect(320, 305, 65, 35, 10);
+      ctx.roundRect(415, 305, 65, 35, 10);
+      ctx.fill();
+
+      // Torso
+      ctx.fillStyle = 'rgb(30, 41, 59)';
+      ctx.beginPath();
+      ctx.moveTo(210, 800);
+      ctx.bezierCurveTo(220, 540, 300, 470, 400, 470);
+      ctx.bezierCurveTo(500, 470, 580, 540, 590, 800);
+      ctx.closePath();
+      ctx.fill();
+      return c;
+    }
+
+    function generateWatchSample() {
+      const c = document.createElement('canvas');
+      c.width = 800; c.height = 800;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgb(215, 220, 228)';
+      ctx.fillRect(0, 0, 800, 800);
+
+      // Watch Straps
+      ctx.fillStyle = 'rgb(15, 23, 42)';
+      ctx.beginPath();
+      ctx.roundRect(330, 80, 140, 640, 24);
+      ctx.fill();
+
+      // Watch Case
+      ctx.fillStyle = 'rgb(51, 65, 85)';
+      ctx.beginPath();
+      ctx.arc(400, 400, 160, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Inner Bezel
+      ctx.fillStyle = 'rgb(2, 6, 23)';
+      ctx.beginPath();
+      ctx.arc(400, 400, 138, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Dial Ring
+      ctx.strokeStyle = 'rgb(6, 182, 212)';
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.arc(400, 400, 110, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Watch Hands
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 8;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(400, 400); ctx.lineTo(400, 330);
+      ctx.moveTo(400, 400); ctx.lineTo(460, 400);
+      ctx.stroke();
+      return c;
+    }
+
+    function generateLogoSample() {
+      const c = document.createElement('canvas');
+      c.width = 800; c.height = 800;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, 800, 800);
+
+      const grad = ctx.createLinearGradient(200, 200, 600, 600);
+      grad.addColorStop(0, 'rgb(139, 92, 246)');
+      grad.addColorStop(1, 'rgb(6, 182, 212)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(450, 140);
+      ctx.lineTo(260, 430);
+      ctx.lineTo(380, 430);
+      ctx.lineTo(320, 660);
+      ctx.lineTo(540, 370);
+      ctx.lineTo(420, 370);
+      ctx.closePath();
+      ctx.fill();
+      return c;
+    }
+
+    // ==================== BACKGROUND REMOVAL ENGINE (Ported from BackgroundRemovalEngine.kt) ====================
+    function executeCutoutOnCanvas(sourceCanvas, settings, strokes) {
+      const width = sourceCanvas.width;
+      const height = sourceCanvas.height;
+      const srcCtx = sourceCanvas.getContext('2d');
+      const srcData = srcCtx.getImageData(0, 0, width, height);
+      const src = srcData.data;
+
+      const outCanvas = document.createElement('canvas');
+      outCanvas.width = width;
+      outCanvas.height = height;
+      const outCtx = outCanvas.getContext('2d');
+      const outImageData = outCtx.createImageData(width, height);
+      const dst = outImageData.data;
+
+      if (settings.mode === 'STUDIO_SOLID') {
+        processStudioSolid(src, dst, width, height, settings);
+      } else if (settings.mode === 'HIGH_CONTRAST') {
+        processHighContrast(src, dst, width, height, settings);
+      } else {
+        processSmartAuto(src, dst, width, height, settings);
+      }
+
+      if (strokes && strokes.length > 0) {
+        applyBrushStrokesToData(src, dst, width, height, strokes);
+      }
+
+      outCtx.putImageData(outImageData, 0, 0);
+      return outCanvas;
+    }
+
+    function processSmartAuto(src, dst, width, height, settings) {
+      let sumR = 0, sumG = 0, sumB = 0, borderSamples = 0;
+      const stepX = Math.max(1, Math.floor(width / 60));
+      const stepY = Math.max(1, Math.floor(height / 60));
+      const borderDepthY = Math.max(2, Math.floor(height * 0.03));
+      const borderDepthX = Math.max(2, Math.floor(width * 0.03));
+
+      for (let y = 0; y < borderDepthY; y++) {
+        const topRow = y * width;
+        const botRow = (height - 1 - y) * width;
+        for (let x = 0; x < width; x += stepX) {
+          const i1 = (topRow + x) * 4;
+          const i2 = (botRow + x) * 4;
+          sumR += src[i1] + src[i2];
+          sumG += src[i1 + 1] + src[i2 + 1];
+          sumB += src[i1 + 2] + src[i2 + 2];
+          borderSamples += 2;
+        }
+      }
+
+      for (let x = 0; x < borderDepthX; x++) {
+        for (let y = 0; y < height; y += stepY) {
+          const i1 = (y * width + x) * 4;
+          const i2 = (y * width + (width - 1 - x)) * 4;
+          sumR += src[i1] + src[i2];
+          sumG += src[i1 + 1] + src[i2 + 1];
+          sumB += src[i1 + 2] + src[i2 + 2];
+          borderSamples += 2;
+        }
+      }
+
+      const avgBgR = Math.floor(sumR / borderSamples);
+      const avgBgG = Math.floor(sumG / borderSamples);
+      const avgBgB = Math.floor(sumB / borderSamples);
+
+      const baseTolerance = (settings.tolerance / 100) * 160 + 15;
+      const feather = Math.max(1, settings.featherRadius) * 6;
+      const centerX = width / 2;
+      const centerY = height / 2;
+
+      for (let y = 0; y < height; y++) {
+        const rowOffset = y * width;
+        const dy = (y - centerY) / centerY;
+        for (let x = 0; x < width; x++) {
+          const idx = (rowOffset + x) * 4;
+          const r = src[idx], g = src[idx + 1], b = src[idx + 2];
+          const dr = r - avgBgR, dg = g - avgBgG, db = b - avgBgB;
+          const colorDist = Math.sqrt(dr * dr + dg * dg + db * db);
+
+          const dx = (x - centerX) / centerX;
+          const radialFactor = Math.sqrt(dx * dx + dy * dy);
+          const centerBonus = Math.max(0, (1 - radialFactor) * 35);
+
+          const effectiveDist = colorDist + centerBonus;
+          let alpha;
+          if (effectiveDist >= baseTolerance + feather) {
+            alpha = 255;
+          } else if (effectiveDist <= baseTolerance - feather) {
+            alpha = 0;
+          } else {
+            const factor = (effectiveDist - (baseTolerance - feather)) / (feather * 2);
+            alpha = Math.round(Math.min(1, Math.max(0, factor)) * 255);
+          }
+
+          dst[idx] = r;
+          dst[idx + 1] = g;
+          dst[idx + 2] = b;
+          dst[idx + 3] = settings.invertMask ? (255 - alpha) : alpha;
+        }
+      }
+    }
+
+    function processStudioSolid(src, dst, width, height, settings) {
+      let tr, tg, tb;
+      if (settings.sampledColor) {
+        tr = settings.sampledColor[0];
+        tg = settings.sampledColor[1];
+        tb = settings.sampledColor[2];
+      } else {
+        const c1 = 0;
+        const c2 = (width - 1) * 4;
+        const c3 = ((height - 1) * width) * 4;
+        const c4 = (height * width - 1) * 4;
+        tr = Math.floor((src[c1] + src[c2] + src[c3] + src[c4]) / 4);
+        tg = Math.floor((src[c1 + 1] + src[c2 + 1] + src[c3 + 1] + src[c4 + 1]) / 4);
+        tb = Math.floor((src[c1 + 2] + src[c2 + 2] + src[c3 + 2] + src[c4 + 2]) / 4);
+      }
+
+      const threshold = (settings.tolerance / 100) * 180 + 10;
+      const feather = Math.max(1, settings.featherRadius) * 5;
+      const total = width * height * 4;
+
+      for (let i = 0; i < total; i += 4) {
+        const r = src[i], g = src[i + 1], b = src[i + 2];
+        const dr = r - tr, dg = g - tg, db = b - tb;
+        const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+        let alpha;
+        if (dist >= threshold + feather) {
+          alpha = 255;
+        } else if (dist <= threshold - feather) {
+          alpha = 0;
+        } else {
+          const factor = (dist - (threshold - feather)) / (feather * 2);
+          alpha = Math.round(Math.min(1, Math.max(0, factor)) * 255);
+        }
+        dst[i] = r;
+        dst[i + 1] = g;
+        dst[i + 2] = b;
+        dst[i + 3] = settings.invertMask ? (255 - alpha) : alpha;
+      }
+    }
+
+    function processHighContrast(src, dst, width, height, settings) {
+      function lumAt(idx) {
+        return 0.299 * src[idx] + 0.587 * src[idx + 1] + 0.114 * src[idx + 2];
+      }
+      const cornerLum = (lumAt(0) + lumAt((width - 1) * 4) + lumAt((height - 1) * width * 4) + lumAt((height * width - 1) * 4)) / 4;
+      const isLightBg = cornerLum > 128;
+      const threshold = (settings.tolerance / 100) * 220 + 20;
+      const total = width * height * 4;
+
+      for (let i = 0; i < total; i += 4) {
+        const r = src[i], g = src[i + 1], b = src[i + 2];
+        const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+        const dist = isLightBg ? (255 - lum) : lum;
+        const alpha = dist >= threshold ? 255 : Math.round(Math.min(1, Math.max(0, dist / threshold)) * 255);
+        dst[i] = r;
+        dst[i + 1] = g;
+        dst[i + 2] = b;
+        dst[i + 3] = settings.invertMask ? (255 - alpha) : alpha;
+      }
+    }
+
+    function applyBrushStrokesToData(src, dst, width, height, strokes) {
+      for (const stroke of strokes) {
+        const rPx = Math.max(2, Math.round(stroke.radiusNorm * Math.max(width, height)));
+        const r2 = rPx * rPx;
+        for (const pt of stroke.points) {
+          const cx = Math.round(pt.xNorm * width);
+          const cy = Math.round(pt.yNorm * height);
+          const minX = Math.max(0, cx - rPx);
+          const maxX = Math.min(width - 1, cx + rPx);
+          const minY = Math.max(0, cy - rPx);
+          const maxY = Math.min(height - 1, cy + rPx);
+
+          for (let y = minY; y <= maxY; y++) {
+            const dy = y - cy;
+            const rowOffset = y * width;
+            for (let x = minX; x <= maxX; x++) {
+              const dx = x - cx;
+              if (dx * dx + dy * dy <= r2) {
+                const idx = (rowOffset + x) * 4;
+                if (stroke.tool === 'ERASER') {
+                  dst[idx + 3] = 0;
+                } else {
+                  dst[idx] = src[idx];
+                  dst[idx + 1] = src[idx + 1];
+                  dst[idx + 2] = src[idx + 2];
+                  dst[idx + 3] = 255;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    function scaleCanvas(sourceCanvas, maxDim) {
+      const w = sourceCanvas.width;
+      const h = sourceCanvas.height;
+      if (w <= maxDim && h <= maxDim) return sourceCanvas;
+      const ratio = w / h;
+      const targetW = w > h ? maxDim : Math.max(1, Math.round(maxDim * ratio));
+      const targetH = w > h ? Math.max(1, Math.round(maxDim / ratio)) : maxDim;
+      const c = document.createElement('canvas');
+      c.width = targetW;
+      c.height = targetH;
+      c.getContext('2d').drawImage(sourceCanvas, 0, 0, targetW, targetH);
+      return c;
+    }
+
+    // ==================== APPLICATION STATE ====================
+    const state = {
+      screen: 'HOME', // HOME | SINGLE | BATCH
+      currentItem: null, // { id, title, origCanvas, previewOrigCanvas, cutoutCanvas, width, height, timeMs }
+      settings: {
+        mode: 'AUTO_SMART',
+        tolerance: 35,
+        featherRadius: 3,
+        sampledColor: null,
+        invertMask: false
+      },
+      strokes: [], // [{ tool: 'ERASER'|'RESTORE', radiusNorm, points: [{xNorm, yNorm}] }]
+      splitView: true,
+      splitFraction: 0.5,
+      zoom: 1,
+      eyedropperMode: false,
+      touchUpTool: 'ERASER',
+      touchUpBrushPx: 24,
+      tempStrokes: [],
+      batchQueue: [] // [{ id, title, origCanvas, cutoutCanvas, width, height, state: 'PENDING'|'PROCESSING'|'COMPLETED', timeMs }]
+    };
+
+    // ==================== NAVIGATION & UI HELPERS ====================
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById('toastBanner');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.add('hidden'), 2800);
+    }
+
+    function navigateTo(screen) {
+      state.screen = screen;
+      document.getElementById('screenHome').classList.toggle('hidden', screen !== 'HOME');
+      document.getElementById('screenSingle').classList.toggle('hidden', screen !== 'SINGLE');
+      document.getElementById('screenBatch').classList.toggle('hidden', screen !== 'BATCH');
+
+      // Update Nav Buttons
+      const mapping = [
+        { btn: 'railHomeBtn', active: screen === 'HOME' },
+        { btn: 'railSingleBtn', active: screen === 'SINGLE' },
+        { btn: 'railBatchBtn', active: screen === 'BATCH' },
+        { btn: 'mobHomeBtn', active: screen === 'HOME' },
+        { btn: 'mobSingleBtn', active: screen === 'SINGLE' },
+        { btn: 'mobBatchBtn', active: screen === 'BATCH' }
+      ];
+      mapping.forEach(({ btn, active }) => {
+        const el = document.getElementById(btn);
+        if (!el) return;
+        const pill = el.querySelector('.nav-pill');
+        if (active) {
+          el.classList.add('text-cyanLight');
+          el.classList.remove('text-slate-400');
+          pill.classList.add('bg-cyanAccent', 'text-black');
+        } else {
+          el.classList.remove('text-cyanLight');
+          el.classList.add('text-slate-400');
+          pill.classList.remove('bg-cyanAccent', 'text-black');
+        }
+      });
+
+      if (screen === 'SINGLE' && !state.currentItem) {
+        loadPresetIntoSingle(SAMPLE_PRESETS[0]);
+      }
+    }
+
+    // ==================== SINGLE CUTOUT WORKFLOW ====================
+    function loadCanvasIntoSingle(title, origCanvas) {
+      state.strokes = [];
+      state.zoom = 1;
+      applyZoomTransform();
+      const previewOrig = scaleCanvas(origCanvas, 900);
+      state.currentItem = {
+        id: 'item_' + Date.now(),
+        title: title,
+        origCanvas: origCanvas,
+        previewOrigCanvas: previewOrig,
+        cutoutCanvas: null,
+        width: origCanvas.width,
+        height: origCanvas.height,
+        timeMs: 0
+      };
+      recomputeSinglePreview();
+      navigateTo('SINGLE');
+    }
+
+    function loadPresetIntoSingle(preset) {
+      const c = preset.generate();
+      loadCanvasIntoSingle(preset.title, c);
+      showToast('Loaded preset: ' + preset.title);
+    }
+
+    function recomputeSinglePreview() {
+      if (!state.currentItem) return;
+      const t0 = performance.now();
+      const cutout = executeCutoutOnCanvas(
+        state.currentItem.previewOrigCanvas,
+        state.settings,
+        state.strokes
+      );
+      const elapsed = Math.max(1, Math.round(performance.now() - t0));
+      state.currentItem.cutoutCanvas = cutout;
+      state.currentItem.timeMs = elapsed;
+
+      // Render onto visible canvases
+      const cutoutEl = document.getElementById('cutoutCanvas');
+      cutoutEl.width = cutout.width;
+      cutoutEl.height = cutout.height;
+      cutoutEl.getContext('2d').drawImage(cutout, 0, 0);
+
+      const origEl = document.getElementById('originalOverlayCanvas');
+      origEl.width = state.currentItem.previewOrigCanvas.width;
+      origEl.height = state.currentItem.previewOrigCanvas.height;
+      origEl.getContext('2d').drawImage(state.currentItem.previewOrigCanvas, 0, 0);
+
+      document.getElementById('singleTitle').textContent = state.currentItem.title;
+      document.getElementById('singleDims').textContent = `${state.currentItem.width} × ${state.currentItem.height}`;
+      document.getElementById('singleSpeedBadge').textContent = `⚡ ${elapsed}ms`;
+      updateSplitViewClip();
+    }
+
+    function updateSplitViewClip() {
+      const origEl = document.getElementById('originalOverlayCanvas');
+      const divider = document.getElementById('splitDividerLine');
+      const badge = document.getElementById('splitBadgePill');
+
+      if (!state.splitView) {
+        origEl.classList.add('hidden');
+        divider.classList.add('hidden');
+        badge.classList.add('hidden');
+        return;
+      }
+
+      origEl.classList.remove('hidden');
+      divider.classList.remove('hidden');
+      badge.classList.remove('hidden');
+
+      const pct = (state.splitFraction * 100).toFixed(2);
+      divider.style.left = pct + '%';
+
+      // Calculate clip relative to the rendered canvas inside the viewport
+      const viewportRect = document.getElementById('previewViewport').getBoundingClientRect();
+      const canvasRect = origEl.getBoundingClientRect();
+      if (canvasRect.width > 0 && viewportRect.width > 0) {
+        const dividerX = viewportRect.left + viewportRect.width * state.splitFraction;
+        const relFraction = Math.min(1, Math.max(0, (dividerX - canvasRect.left) / canvasRect.width));
+        const rightInset = ((1 - relFraction) * 100).toFixed(2);
+        origEl.style.clipPath = `inset(0 ${rightInset}% 0 0)`;
+      } else {
+        origEl.style.clipPath = `inset(0 ${(100 - state.splitFraction * 100).toFixed(2)}% 0 0)`;
+      }
+    }
+
+    function applyZoomTransform() {
+      const box = document.getElementById('zoomTransformBox');
+      box.style.transform = `scale(${state.zoom})`;
+      const resetBtn = document.getElementById('zoomResetBtn');
+      if (state.zoom !== 1) {
+        resetBtn.classList.remove('hidden');
+        resetBtn.textContent = Math.round(state.zoom * 100) + '%';
+      } else {
+        resetBtn.classList.add('hidden');
+      }
+      setTimeout(updateSplitViewClip, 80);
+    }
+
+    function downloadFullResSingle() {
+      if (!state.currentItem) return;
+      const banner = document.getElementById('singleProcessingBanner');
+      banner.classList.remove('hidden');
+      setTimeout(() => {
+        const highRes = executeCutoutOnCanvas(
+          state.currentItem.origCanvas,
+          state.settings,
+          state.strokes
+        );
+        const safeName = state.currentItem.title.replace(/[^a-zA-Z0-9_-]/g, '_');
+        triggerCanvasDownload(highRes, `cutout_${safeName}.png`);
+        banner.classList.add('hidden');
+        showToast('Downloaded full-resolution transparent PNG!');
+      }, 30);
+    }
+
+    function triggerCanvasDownload(canvas, filename) {
+      const dataUrl = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // ==================== TOUCH UP CANVAS MODAL ====================
+    function openTouchUpModal() {
+      if (!state.currentItem || !state.currentItem.cutoutCanvas) return;
+      state.tempStrokes = state.strokes.map(s => ({
+        tool: s.tool,
+        radiusNorm: s.radiusNorm,
+        points: s.points.slice()
+      }));
+      renderTouchUpPreview();
+      document.getElementById('touchUpModal').classList.remove('hidden');
+    }
+
+    function renderTouchUpPreview() {
+      const tempCutout = executeCutoutOnCanvas(
+        state.currentItem.previewOrigCanvas,
+        state.settings,
+        state.tempStrokes
+      );
+      const el = document.getElementById('touchUpCanvasEl');
+      el.width = tempCutout.width;
+      el.height = tempCutout.height;
+      el.getContext('2d').drawImage(tempCutout, 0, 0);
+    }
+
+    // ==================== BATCH PROCESSING WORKFLOW ====================
+    function addCanvasItemToBatch(title, origCanvas) {
+      const scaled = scaleCanvas(origCanvas, 1200);
+      state.batchQueue.push({
+        id: 'batch_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        title: title,
+        origCanvas: scaled,
+        cutoutCanvas: null,
+        width: scaled.width,
+        height: scaled.height,
+        state: 'PENDING',
+        timeMs: 0,
+        settings: { ...state.settings }
+      });
+      renderBatchQueue();
+    }
+
+    function renderBatchQueue() {
+      const q = state.batchQueue;
+      const count = q.length;
+      document.getElementById('batchQueueCountSubtitle').textContent = `${count} item${count === 1 ? '' : 's'} in queue`;
+
+      // Update badges
+      ['railBatchBadge', 'mobBatchBadge'].forEach(id => {
+        const b = document.getElementById(id);
+        if (count > 0) {
+          b.textContent = count;
+          b.classList.remove('hidden');
+        } else {
+          b.classList.add('hidden');
+        }
+      });
+
+      const emptyEl = document.getElementById('batchEmptyState');
+      const summaryEl = document.getElementById('batchSummaryCard');
+      const gridEl = document.getElementById('batchGridContainer');
+      const clearBtn = document.getElementById('batchClearBtn');
+
+      if (count === 0) {
+        emptyEl.classList.remove('hidden');
+        summaryEl.classList.add('hidden');
+        gridEl.classList.add('hidden');
+        clearBtn.classList.add('hidden');
+        return;
+      }
+
+      emptyEl.classList.add('hidden');
+      summaryEl.classList.remove('hidden');
+      gridEl.classList.remove('hidden');
+      clearBtn.classList.remove('hidden');
+
+      const completed = q.filter(i => i.state === 'COMPLETED').length;
+      const pending = count - completed;
+      const totalMs = q.filter(i => i.state === 'COMPLETED').reduce((acc, i) => acc + i.timeMs, 0);
+      const avgMs = completed > 0 ? Math.round(totalMs / completed) : 0;
+
+      document.getElementById('statTotal').textContent = count;
+      document.getElementById('statDone').textContent = completed;
+      document.getElementById('statPending').textContent = pending;
+
+      const avgBadge = document.getElementById('batchAvgSpeedBadge');
+      if (avgMs > 0) {
+        avgBadge.textContent = `⚡ Avg ${avgMs}ms/img`;
+        avgBadge.classList.remove('hidden');
+      } else {
+        avgBadge.classList.add('hidden');
+      }
+
+      document.getElementById('batchProcessAllBtn').classList.toggle('hidden', completed >= count);
+      const exportBtn = document.getElementById('batchExportAllBtn');
+      if (completed > 0) {
+        exportBtn.classList.remove('hidden');
+        exportBtn.textContent = `⬇ Export ${completed} PNG${completed === 1 ? '' : 's'}`;
+      } else {
+        exportBtn.classList.add('hidden');
+      }
+
+      // Render cards
+      gridEl.innerHTML = '';
+      q.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'bg-slate850 border border-slate-800 rounded-2xl overflow-hidden flex flex-col hover:border-cyanAccent/50 transition cursor-pointer';
+        const displayCanvas = item.cutoutCanvas || item.origCanvas;
+        const dataUrl = displayCanvas.toDataURL('image/png');
+
+        let badgeClass = 'bg-slate-700 text-white';
+        let badgeText = '⏳ Waiting';
+        if (item.state === 'COMPLETED') {
+          badgeClass = 'bg-emeraldSuccess text-black font-bold';
+          badgeText = '✓ PNG';
+        } else if (item.state === 'PROCESSING') {
+          badgeClass = 'bg-cyanAccent text-black font-bold';
+          badgeText = '⚡ Processing';
+        }
+
+        card.innerHTML = `
+          <div class="relative h-36 bg-checker-dark flex items-center justify-center p-2">
+            <img src="${dataUrl}" alt="${item.title}" class="max-h-full max-w-full object-contain" />
+            <span class="absolute top-2 right-2 px-2 py-0.5 rounded-lg text-[10px] ${badgeClass}">${badgeText}</span>
+            <button type="button" class="inspect-btn absolute bottom-2 right-2 w-7 h-7 rounded-full bg-slate900/85 hover:bg-cyanAccent text-white hover:text-black flex items-center justify-center text-xs transition" title="Inspect & Edit in Studio">
+              👁️
+            </button>
+          </div>
+          <div class="p-2.5">
+            <div class="text-xs font-bold text-white truncate">${item.title}</div>
+            <div class="flex items-center justify-between text-[11px] text-slate-400 mt-0.5">
+              <span>${item.width}×${item.height}</span>
+              <span class="text-cyanLight font-medium">${item.timeMs > 0 ? item.timeMs + 'ms' : ''}</span>
+            </div>
+          </div>
+        `;
+        card.addEventListener('click', () => {
+          loadCanvasIntoSingle(item.title, item.origCanvas);
+        });
+        gridEl.appendChild(card);
+      });
+    }
+
+    async function processAllBatchItems() {
+      const q = state.batchQueue;
+      if (q.length === 0) return;
+      const wrap = document.getElementById('batchProgressBarWrap');
+      const bar = document.getElementById('batchProgressBar');
+      const heading = document.getElementById('batchStatusHeading');
+      wrap.classList.remove('hidden');
+      heading.textContent = 'Processing Batch...';
+
+      for (let i = 0; i < q.length; i++) {
+        const item = q[i];
+        if (item.state === 'COMPLETED') continue;
+        item.state = 'PROCESSING';
+        bar.style.width = Math.round((i / q.length) * 100) + '%';
+        renderBatchQueue();
+        await new Promise(r => setTimeout(r, 40));
+
+        const t0 = performance.now();
+        const previewCanvas = scaleCanvas(item.origCanvas, 900);
+        item.cutoutCanvas = executeCutoutOnCanvas(previewCanvas, item.settings, []);
+        item.timeMs = Math.max(1, Math.round(performance.now() - t0));
+        item.state = 'COMPLETED';
+        bar.style.width = Math.round(((i + 1) / q.length) * 100) + '%';
+        renderBatchQueue();
+      }
+
+      heading.textContent = 'Queue Summary';
+      setTimeout(() => wrap.classList.add('hidden'), 600);
+      showToast(`Batch processing complete! (${q.length} items processed)`);
+    }
+
+    function exportAllBatchPngs() {
+      const completed = state.batchQueue.filter(i => i.state === 'COMPLETED' && i.cutoutCanvas);
+      if (completed.length === 0) {
+        showToast('No processed images to export');
+        return;
+      }
+      completed.forEach((item, idx) => {
+        setTimeout(() => {
+          const safe = item.title.replace(/[^a-zA-Z0-9_-]/g, '_');
+          triggerCanvasDownload(item.cutoutCanvas, `cutout_${safe}.png`);
+        }, idx * 180);
+      });
+      showToast(`Exported ${completed.length} transparent PNGs!`);
+    }
+
+    // ==================== FILE LOADING HELPERS ====================
+    function loadImageFileToCanvas(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            const c = scaleImageToCanvas(img, 2560);
+            resolve({ title: file.name.replace(/\.[^.]+$/, ''), canvas: c });
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function scaleImageToCanvas(img, maxDim) {
+      let w = img.naturalWidth || img.width;
+      let h = img.naturalHeight || img.height;
+      if (w > maxDim || h > maxDim) {
+        const ratio = w / h;
+        if (w > h) { w = maxDim; h = Math.max(1, Math.round(maxDim / ratio)); }
+        else { h = maxDim; w = Math.max(1, Math.round(maxDim * ratio)); }
+      }
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      return c;
+    }
+
+    // ==================== INITIALIZATION & EVENT LISTENERS ====================
+    window.addEventListener('DOMContentLoaded', () => {
+      // Populate Sample Presets on Home Screen
+      const listEl = document.getElementById('samplePresetsList');
+      SAMPLE_PRESETS.forEach(preset => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'w-full text-left bg-slate850 hover:bg-slate800 border border-slate-800 hover:border-cyanAccent/50 rounded-2xl p-3.5 flex items-center gap-3.5 transition group';
+        btn.innerHTML = `
+          <div class="w-11 h-11 rounded-xl bg-slate800 flex items-center justify-center text-xl shrink-0">${preset.iconTag}</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-bold text-white">${preset.title}</span>
+              <span class="px-2 py-0.5 rounded-md bg-cyanAccent/20 text-cyanLight text-[10px] font-semibold">${preset.category}</span>
+            </div>
+            <div class="text-xs text-slate-400 truncate mt-0.5">${preset.description}</div>
+          </div>
+          <span class="text-slate-400 group-hover:text-cyanLight group-hover:translate-x-0.5 transition">→</span>
+        `;
+        btn.addEventListener('click', () => loadPresetIntoSingle(preset));
+        listEl.appendChild(btn);
+      });
+
+      // Navigation bindings
+      document.getElementById('railHomeBtn').addEventListener('click', () => navigateTo('HOME'));
+      document.getElementById('railSingleBtn').addEventListener('click', () => navigateTo('SINGLE'));
+      document.getElementById('railBatchBtn').addEventListener('click', () => navigateTo('BATCH'));
+      document.getElementById('mobHomeBtn').addEventListener('click', () => navigateTo('HOME'));
+      document.getElementById('mobSingleBtn').addEventListener('click', () => navigateTo('SINGLE'));
+      document.getElementById('mobBatchBtn').addEventListener('click', () => navigateTo('BATCH'));
+      document.getElementById('singleBackBtn').addEventListener('click', () => navigateTo('HOME'));
+      document.getElementById('batchBackBtn').addEventListener('click', () => navigateTo('HOME'));
+
+      // File upload triggers
+      const singleInput = document.getElementById('singleFileInput');
+      const batchInput = document.getElementById('batchFileInput');
+
+      document.getElementById('homeSingleUploadBtn').addEventListener('click', () => singleInput.click());
+      document.getElementById('changePhotoBtn').addEventListener('click', () => singleInput.click());
+      document.getElementById('homeBatchUploadBtn').addEventListener('click', () => batchInput.click());
+      document.getElementById('batchAddMoreBtn').addEventListener('click', () => batchInput.click());
+      document.getElementById('batchSelectEmptyBtn').addEventListener('click', () => batchInput.click());
+
+      singleInput.addEventListener('change', async e => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const { title, canvas } = await loadImageFileToCanvas(file);
+        loadCanvasIntoSingle(title, canvas);
+        showToast(`Loaded ${title} (${canvas.width}×${canvas.height})`);
+        singleInput.value = '';
+      });
+
+      batchInput.addEventListener('change', async e => {
+        const files = Array.from(e.target.files || []);
+        if (files.length === 0) return;
+        for (const f of files) {
+          const { title, canvas } = await loadImageFileToCanvas(f);
+          addCanvasItemToBatch(title, canvas);
+        }
+        navigateTo('BATCH');
+        showToast(`Added ${files.length} photo${files.length === 1 ? '' : 's'} to batch queue`);
+        batchInput.value = '';
+      });
+
+      // Split Comparison Handle Dragging
+      const viewport = document.getElementById('previewViewport');
+      const handle = document.getElementById('splitHandleBtn');
+      let draggingSplit = false;
+
+      function updateSplitFromClientX(clientX) {
+        const rect = viewport.getBoundingClientRect();
+        if (rect.width <= 0) return;
+        state.splitFraction = Math.min(0.95, Math.max(0.05, (clientX - rect.left) / rect.width));
+        updateSplitViewClip();
+      }
+
+      handle.addEventListener('pointerdown', e => {
+        draggingSplit = true;
+        handle.setPointerCapture(e.pointerId);
+        e.stopPropagation();
+      });
+      handle.addEventListener('pointermove', e => {
+        if (!draggingSplit) return;
+        updateSplitFromClientX(e.clientX);
+      });
+      handle.addEventListener('pointerup', () => { draggingSplit = false; });
+      window.addEventListener('resize', updateSplitViewClip);
+
+      // Eyedropper click on viewport
+      viewport.addEventListener('click', e => {
+        if (!state.eyedropperMode || !state.currentItem) return;
+        const origEl = document.getElementById('cutoutCanvas');
+        const rect = origEl.getBoundingClientRect();
+        if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
+        const x = Math.floor(((e.clientX - rect.left) / rect.width) * state.currentItem.previewOrigCanvas.width);
+        const y = Math.floor(((e.clientY - rect.top) / rect.height) * state.currentItem.previewOrigCanvas.height);
+        const pixel = state.currentItem.previewOrigCanvas.getContext('2d').getImageData(x, y, 1, 1).data;
+        state.settings.sampledColor = [pixel[0], pixel[1], pixel[2]];
+        state.settings.mode = 'STUDIO_SOLID';
+        state.eyedropperMode = false;
+        document.getElementById('eyedropperHintPill').classList.add('hidden');
+        syncModeButtonsUI();
+        recomputeSinglePreview();
+        showToast(`Picked background color RGB(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`);
+      });
+
+      // Background chips & color dots
+      const backdropBox = document.getElementById('studioBackdropBox');
+      function clearBackdropClasses() {
+        backdropBox.className = 'relative w-full h-full flex items-center justify-center overflow-hidden';
+        backdropBox.style.background = '';
+      }
+
+      document.querySelectorAll('.bg-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.bg-chip').forEach(b => {
+            b.className = 'bg-chip px-3 py-1 rounded-xl text-xs font-medium bg-slate800 text-white shrink-0';
+          });
+          document.querySelectorAll('.bg-dot').forEach(d => d.classList.remove('border-white'));
+          btn.className = 'bg-chip px-3 py-1 rounded-xl text-xs font-bold bg-cyanLight text-black shrink-0';
+
+          clearBackdropClasses();
+          const type = btn.getAttribute('data-bg');
+          if (type === 'CHECKERBOARD_DARK') backdropBox.classList.add('bg-checker-dark');
+          else if (type === 'CHECKERBOARD_LIGHT') backdropBox.classList.add('bg-checker-light');
+          else if (type === 'PURE_WHITE') backdropBox.style.background = '#FFFFFF';
+          else if (type === 'PURE_BLACK') backdropBox.style.background = '#090D16';
+          else if (type === 'STUDIO_GRADIENT') backdropBox.classList.add('bg-studio-gradient');
+        });
+      });
+
+      document.querySelectorAll('.bg-dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+          document.querySelectorAll('.bg-chip').forEach(b => {
+            b.className = 'bg-chip px-3 py-1 rounded-xl text-xs font-medium bg-slate800 text-white shrink-0';
+          });
+          document.querySelectorAll('.bg-dot').forEach(d => d.classList.remove('border-white'));
+          dot.classList.add('border-white');
+          clearBackdropClasses();
+          backdropBox.style.background = dot.getAttribute('data-bgcolor');
+        });
+      });
+
+      // Zoom buttons
+      document.getElementById('zoomInBtn').addEventListener('click', () => {
+        state.zoom = Math.min(4, +(state.zoom + 0.25).toFixed(2));
+        applyZoomTransform();
+      });
+      document.getElementById('zoomOutBtn').addEventListener('click', () => {
+        state.zoom = Math.max(1, +(state.zoom - 0.25).toFixed(2));
+        applyZoomTransform();
+      });
+      document.getElementById('zoomResetBtn').addEventListener('click', () => {
+        state.zoom = 1;
+        applyZoomTransform();
+      });
+
+      // Tool Action Row buttons
+      document.getElementById('toggleSplitViewBtn').addEventListener('click', e => {
+        state.splitView = !state.splitView;
+        e.currentTarget.classList.toggle('text-cyanLight', state.splitView);
+        e.currentTarget.classList.toggle('border-cyanAccent/40', state.splitView);
+        updateSplitViewClip();
+      });
+
+      document.getElementById('toggleTuningPanelBtn').addEventListener('click', e => {
+        const panel = document.getElementById('tuningPanelBox');
+        const isHidden = panel.classList.toggle('hidden');
+        e.currentTarget.classList.toggle('text-cyanLight', !isHidden);
+      });
+
+      document.getElementById('eyedropperToggleBtn').addEventListener('click', () => {
+        state.eyedropperMode = !state.eyedropperMode;
+        document.getElementById('eyedropperHintPill').classList.toggle('hidden', !state.eyedropperMode);
+      });
+
+      // Tuning controls
+      function syncModeButtonsUI() {
+        document.querySelectorAll('.mode-chip').forEach(b => {
+          if (b.getAttribute('data-mode') === state.settings.mode) {
+            b.className = 'mode-chip py-1.5 px-2 rounded-xl text-xs font-bold bg-cyanAccent text-black transition';
+          } else {
+            b.className = 'mode-chip py-1.5 px-2 rounded-xl text-xs font-medium bg-slate800 text-slate-300 transition';
+          }
+        });
+      }
+
+      document.querySelectorAll('.mode-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.settings.mode = btn.getAttribute('data-mode');
+          if (state.settings.mode !== 'STUDIO_SOLID') state.settings.sampledColor = null;
+          syncModeButtonsUI();
+          recomputeSinglePreview();
+        });
+      });
+
+      document.getElementById('toleranceSlider').addEventListener('input', e => {
+        state.settings.tolerance = Number(e.target.value);
+        document.getElementById('toleranceLabel').textContent = `Sensitivity: ${state.settings.tolerance}%`;
+        recomputeSinglePreview();
+      });
+
+      document.getElementById('featherSlider').addEventListener('input', e => {
+        state.settings.featherRadius = Number(e.target.value);
+        document.getElementById('featherLabel').textContent = `Soft Edge: ${state.settings.featherRadius}px`;
+        recomputeSinglePreview();
+      });
+
+      document.getElementById('invertMaskToggle').addEventListener('change', e => {
+        state.settings.invertMask = e.target.checked;
+        recomputeSinglePreview();
+      });
+
+      // Save & Share buttons
+      document.getElementById('singleTopSaveBtn').addEventListener('click', downloadFullResSingle);
+      document.getElementById('downloadPngMainBtn').addEventListener('click', downloadFullResSingle);
+      document.getElementById('singleShareBtn').addEventListener('click', async () => {
+        if (!state.currentItem || !state.currentItem.cutoutCanvas) return;
+        try {
+          const blob = await new Promise(r => state.currentItem.cutoutCanvas.toBlob(r, 'image/png'));
+          const file = new File([blob], `${state.currentItem.title}_cutout.png`, { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: 'CutOut Pro - Transparent PNG',
+              text: 'Cut out with CutOut Pro',
+              files: [file]
+            });
+            return;
+          }
+        } catch (_) {}
+        downloadFullResSingle();
+      });
+
+      // Touch Up Modal bindings
+      document.getElementById('openTouchUpBtn').addEventListener('click', openTouchUpModal);
+      document.getElementById('touchUpCancelBtn').addEventListener('click', () => {
+        document.getElementById('touchUpModal').classList.add('hidden');
+      });
+      document.getElementById('touchUpUndoBtn').addEventListener('click', () => {
+        if (state.tempStrokes.length > 0) {
+          state.tempStrokes.pop();
+          renderTouchUpPreview();
+        }
+      });
+      document.getElementById('touchUpClearBtn').addEventListener('click', () => {
+        state.tempStrokes = [];
+        renderTouchUpPreview();
+      });
+      document.getElementById('touchUpApplyBtn').addEventListener('click', () => {
+        state.strokes = state.tempStrokes.slice();
+        document.getElementById('touchUpModal').classList.add('hidden');
+        recomputeSinglePreview();
+        showToast('Applied manual touch-up edits');
+      });
+
+      const eraserBtn = document.getElementById('toolEraserBtn');
+      const restoreBtn = document.getElementById('toolRestoreBtn');
+      eraserBtn.addEventListener('click', () => {
+        state.touchUpTool = 'ERASER';
+        eraserBtn.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-roseError text-white flex items-center gap-1.5';
+        restoreBtn.className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-slate800 text-slate-300 flex items-center gap-1.5';
+      });
+      restoreBtn.addEventListener('click', () => {
+        state.touchUpTool = 'RESTORE';
+        restoreBtn.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-cyanAccent text-black flex items-center gap-1.5';
+        eraserBtn.className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-slate800 text-slate-300 flex items-center gap-1.5';
+      });
+
+      document.getElementById('brushSizeSlider').addEventListener('input', e => {
+        state.touchUpBrushPx = Number(e.target.value);
+        document.getElementById('brushSizeLabel').textContent = `Size: ${state.touchUpBrushPx}px`;
+      });
+
+      // TouchUp Canvas Painting
+      const tuCanvas = document.getElementById('touchUpCanvasEl');
+      let painting = false;
+      let activeStroke = null;
+
+      function getNormPoint(e) {
+        const rect = tuCanvas.getBoundingClientRect();
+        return {
+          xNorm: Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width)),
+          yNorm: Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height)),
+          rectWidth: rect.width
+        };
+      }
+
+      tuCanvas.addEventListener('pointerdown', e => {
+        painting = true;
+        tuCanvas.setPointerCapture(e.pointerId);
+        const pt = getNormPoint(e);
+        activeStroke = {
+          tool: state.touchUpTool,
+          radiusNorm: state.touchUpBrushPx / Math.max(300, pt.rectWidth),
+          points: [{ xNorm: pt.xNorm, yNorm: pt.yNorm }]
+        };
+        state.tempStrokes.push(activeStroke);
+        renderTouchUpPreview();
+      });
+      tuCanvas.addEventListener('pointermove', e => {
+        if (!painting || !activeStroke) return;
+        const pt = getNormPoint(e);
+        activeStroke.points.push({ xNorm: pt.xNorm, yNorm: pt.yNorm });
+        renderTouchUpPreview();
+      });
+      tuCanvas.addEventListener('pointerup', () => {
+        painting = false;
+        activeStroke = null;
+      });
+
+      // Batch screen bindings
+      document.getElementById('batchLoadSamplesBtn').addEventListener('click', () => {
+        SAMPLE_PRESETS.forEach(p => addCanvasItemToBatch(p.title, p.generate()));
+        showToast('Added 4 sample photos to batch queue');
+      });
+      document.getElementById('batchClearBtn').addEventListener('click', () => {
+        state.batchQueue = [];
+        renderBatchQueue();
+        showToast('Batch queue cleared');
+      });
+      document.getElementById('batchProcessAllBtn').addEventListener('click', processAllBatchItems);
+      document.getElementById('batchExportAllBtn').addEventListener('click', exportAllBatchPngs);
+
+      // PWA Install Prompt
+      let deferredPrompt = null;
+      const installBtn = document.getElementById('installPwaBtn');
+      window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.classList.remove('hidden');
+      });
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installBtn.classList.add('hidden');
+      });
+
+      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      }
+
+      navigateTo('HOME');
+    });
+  </script>
+</body>
+</html>
