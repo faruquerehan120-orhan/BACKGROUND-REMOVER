@@ -4,20 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <meta name="theme-color" content="#090D16" />
-  <title>CutOut Pro — AI Background Remover & Transparent PNG Studio</title>
+  <title>CutOut Pro — Instant Background Remover & Transparent PNG Studio</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <!-- Google MediaPipe Real Neural Network Human/Portrait Segmentation -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1.1675469240/selfie_segmentation.js" crossorigin="anonymous"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          fontFamily: { sans: ['Inter', ' system-ui', 'sans-serif'] },
           colors: {
             slate950: '#090D16',
             slate900: '#0F172A',
@@ -45,6 +43,7 @@
       padding: 0;
       overflow-x: hidden;
     }
+    /* Studio Checkerboard Patterns */
     .bg-checker-dark {
       background-color: #1E2638;
       background-image:
@@ -140,8 +139,8 @@
               </svg>
             </div>
             <div>
-              <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">CutOut Pro AI</h1>
-              <p class="text-xs sm:text-sm text-slate-300">Neural AI Portrait, Product &amp; Transparent PNG Background Remover</p>
+              <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">CutOut Pro</h1>
+              <p class="text-xs sm:text-sm text-slate-400">Instant Background Remover &amp; Transparent PNG Studio</p>
             </div>
           </div>
 
@@ -153,14 +152,14 @@
 
         <!-- Feature Badges -->
         <div class="flex flex-wrap gap-2 mt-5">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-cyanAccent/20 border border-cyanAccent/40 text-xs font-semibold text-cyanLight">
-            <span>🧠</span> Google Neural AI Portrait Engine
-          </span>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-violetAccent/20 border border-violetAccent/40 text-xs font-semibold text-violet-300">
-            <span>✨</span> Deep AI Hair &amp; Object Segmentation
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 text-xs font-medium text-white">
+            <span class="text-cyanLight">✨</span> Smart Auto Cutout
           </span>
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 text-xs font-medium text-white">
-            <span class="text-cyanLight">💎</span> Transparent &amp; White/Color Export
+            <span class="text-cyanLight">💎</span> High-Res Lossless
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 text-xs font-medium text-white">
+            <span class="text-cyanLight">⚡</span> Ultra-Fast Speed
           </span>
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 text-xs font-medium text-white">
             <span class="text-cyanLight">🗂️</span> Bulk Batch Mode
@@ -179,7 +178,7 @@
             </svg>
           </div>
           <div class="text-base font-bold text-white">Single Photo</div>
-          <div class="text-xs text-slate-400 mt-0.5">Upload &amp; live AI background removal</div>
+          <div class="text-xs text-slate-400 mt-0.5">Upload &amp; live interactive preview</div>
         </button>
 
         <!-- Batch Cutout Tile -->
@@ -202,38 +201,40 @@
         </div>
       </div>
 
-      <div id="samplePresetsList" class="flex flex-col gap-2.5 mb-8"></div>
+      <div id="samplePresetsList" class="flex flex-col gap-2.5 mb-8">
+        <!-- Populated dynamically from SamplePresets -->
+      </div>
 
       <!-- How It Works Info Card -->
       <div class="bg-slate850 border border-slate-800/80 rounded-2xl p-5 mb-6">
-        <h3 class="text-sm font-bold text-white mb-3.5">✨ How CutOut Pro AI Works</h3>
+        <h3 class="text-sm font-bold text-white mb-3.5">✨ How CutOut Pro Works</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div class="flex items-start gap-3">
             <span class="w-6 h-6 rounded-full bg-slate800 text-cyanAccent text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
             <div>
-              <div class="text-xs font-semibold text-white">Select Any Portrait or Product Photo</div>
-              <div class="text-[11px] text-slate-400">Works on indoor rooms, outdoor plants, studio shots, and logos</div>
+              <div class="text-xs font-semibold text-white">Select or Drop Photos</div>
+              <div class="text-[11px] text-slate-400">Upload any product, portrait, or logo photo</div>
             </div>
           </div>
           <div class="flex items-start gap-3">
             <span class="w-6 h-6 rounded-full bg-slate800 text-cyanAccent text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
             <div>
-              <div class="text-xs font-semibold text-white">Real AI Subject Detection</div>
-              <div class="text-[11px] text-slate-400">Google MediaPipe AI &amp; Deep ISNet protect faces, eyes, hair, and beards while removing the background</div>
+              <div class="text-xs font-semibold text-white">Automatic Cutout</div>
+              <div class="text-[11px] text-slate-400">Perimeter saliency separates foreground with smooth anti-aliased edges</div>
             </div>
           </div>
           <div class="flex items-start gap-3">
             <span class="w-6 h-6 rounded-full bg-slate800 text-cyanAccent text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
             <div>
-              <div class="text-xs font-semibold text-white">Choose Backdrop &amp; Touch Up</div>
-              <div class="text-[11px] text-slate-400">Preview on transparent grid, pure white, passport blue, or touch up edges with brushes</div>
+              <div class="text-xs font-semibold text-white">Preview &amp; Refine</div>
+              <div class="text-[11px] text-slate-400">Use split comparison, tweak sensitivity or touch up with magic eraser</div>
             </div>
           </div>
           <div class="flex items-start gap-3">
             <span class="w-6 h-6 rounded-full bg-slate800 text-cyanAccent text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
             <div>
-              <div class="text-xs font-semibold text-white">Save Transparent or Colored PNG</div>
-              <div class="text-[11px] text-slate-400">Download true transparent PNG or save with your selected White/Studio background</div>
+              <div class="text-xs font-semibold text-white">Export Transparent PNG</div>
+              <div class="text-[11px] text-slate-400">Download full-resolution PNG or share anywhere</div>
             </div>
           </div>
         </div>
@@ -252,7 +253,7 @@
             <div id="singleTitle" class="text-sm sm:text-base font-bold text-white truncate">Cutout Preview</div>
             <div class="flex items-center gap-2">
               <span id="singleDims" class="text-[11px] text-slate-400">800 × 800</span>
-              <span id="singleSpeedBadge" class="px-2 py-0.5 rounded-md bg-cyanAccent/20 text-cyanLight text-[10px] font-semibold">🧠 AI Ready</span>
+              <span id="singleSpeedBadge" class="px-2 py-0.5 rounded-md bg-cyanAccent/20 text-cyanLight text-[10px] font-semibold">⚡ 12ms</span>
             </div>
           </div>
         </div>
@@ -269,27 +270,27 @@
       </header>
 
       <!-- Processing Banner -->
-      <div id="singleProcessingBanner" class="hidden bg-cyanAccent/20 text-cyanLight text-xs py-2 px-4 flex items-center justify-center gap-2 shrink-0 font-semibold">
+      <div id="singleProcessingBanner" class="hidden bg-cyanAccent/20 text-cyanLight text-xs py-1.5 px-4 flex items-center justify-center gap-2 shrink-0">
         <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
-        <span id="processingBannerText">🧠 AI Neural Network is removing background...</span>
+        <span>Processing high-res cutout...</span>
       </div>
 
       <!-- Interactive Split Comparison & Viewport -->
-      <div id="previewViewport" class="relative flex-1 bg-black overflow-hidden flex items-center justify-center min-h-[260px]">
+      <div id="previewViewport" class="relative flex-1 bg-black overflow-hidden flex items-center justify-center min-h-[280px]">
         <!-- Backdrop container -->
         <div id="studioBackdropBox" class="relative w-full h-full flex items-center justify-center bg-checker-dark overflow-hidden">
           <!-- Transform wrapper for zoom/pan -->
           <div id="zoomTransformBox" class="relative flex items-center justify-center max-w-full max-h-full transition-transform duration-75" style="transform-origin: center center;">
             <!-- Cutout Canvas (Full) -->
-            <canvas id="cutoutCanvas" class="max-w-full max-h-[52vh] object-contain block pointer-events-none"></canvas>
+            <canvas id="cutoutCanvas" class="max-w-full max-h-[56vh] object-contain block pointer-events-none"></canvas>
             <!-- Original Canvas (Clipped for Split Comparison) -->
-            <canvas id="originalOverlayCanvas" class="max-w-full max-h-[52vh] object-contain block absolute inset-0 pointer-events-none"></canvas>
+            <canvas id="originalOverlayCanvas" class="max-w-full max-h-[56vh] object-contain block absolute inset-0 pointer-events-none"></canvas>
           </div>
         </div>
 
         <!-- Split Comparison Divider Line & Draggable Handle -->
         <div id="splitDividerLine" class="absolute top-0 bottom-0 w-0.5 bg-white shadow-[1px_0_4px_rgba(0,0,0,0.6)] pointer-events-none" style="left: 50%;">
-          <div id="splitHandleBtn" class="pointer-events-auto absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-cyanAccent border-[2.5px] border-white shadow-xl flex items-center justify-center cursor-ew-resize touch-none">
+          <div id="splitHandleBtn" class=" pointer-events-auto absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-cyanAccent border-[2.5px] border-white shadow-xl flex items-center justify-center cursor-ew-resize touch-none">
             <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8 7l-5 5m0 0l5 5m-5-5h18m-5-5l5 5m0 0l-5 5"/>
             </svg>
@@ -300,12 +301,12 @@
         <div id="splitBadgePill" class="absolute top-3 left-1/2 -translate-x-1/2 px-3.5 py-1 rounded-full bg-slate900/80 backdrop-blur border border-slate-700/60 text-[11px] font-semibold flex items-center gap-2 pointer-events-none">
           <span class="text-slate-400">ORIGINAL</span>
           <span class="text-slate-600">|</span>
-          <span class="text-cyanAccent">CUTOUT RESULT</span>
+          <span class="text-cyanAccent">TRANSPARENT PNG</span>
         </div>
 
         <!-- Eyedropper Hint Pill -->
         <div id="eyedropperHintPill" class="hidden absolute bottom-3 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-violetAccent/90 text-white text-xs font-semibold shadow-lg pointer-events-none">
-          🎯 Tap anywhere on the background to remove that connected color
+          🎯 Tap anywhere on the image to pick background color
         </div>
 
         <!-- Zoom Controls -->
@@ -317,7 +318,7 @@
       </div>
 
       <!-- Preview Studio Bottom Toolbar -->
-      <div class="bg-slate850 border-t border-slate-800 px-4 py-3 shrink-0 overflow-y-auto max-h-[50vh]">
+      <div class="bg-slate850 border-t border-slate-800 px-4 py-3 shrink-0 overflow-y-auto max-h-[48vh]">
         <!-- Background Switcher Row -->
         <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
           <svg class="w-4 h-4 text-slate-400 shrink-0 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
@@ -328,7 +329,6 @@
           <button type="button" data-bg="STUDIO_GRADIENT" class="bg-chip px-3 py-1 rounded-xl text-xs font-medium bg-slate800 text-white shrink-0">Studio Gradient</button>
 
           <!-- Custom Color Dots -->
-          <button type="button" data-bgcolor="#2563EB" class="bg-dot w-6 h-6 rounded-full shrink-0 border-2 border-transparent" style="background:#2563EB;" title="Passport Blue Backdrop"></button>
           <button type="button" data-bgcolor="#06B6D4" class="bg-dot w-6 h-6 rounded-full shrink-0 border-2 border-transparent" style="background:#06B6D4;" title="Cyan Backdrop"></button>
           <button type="button" data-bgcolor="#8B5CF6" class="bg-dot w-6 h-6 rounded-full shrink-0 border-2 border-transparent" style="background:#8B5CF6;" title="Violet Backdrop"></button>
           <button type="button" data-bgcolor="#10B981" class="bg-dot w-6 h-6 rounded-full shrink-0 border-2 border-transparent" style="background:#10B981;" title="Emerald Backdrop"></button>
@@ -337,12 +337,8 @@
 
         <!-- Tool Action Row -->
         <div class="flex flex-wrap items-center gap-2 mt-2">
-          <button id="toggleSplitViewBtn" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate800 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition">
+          <button id="toggleSplitViewBtn" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate800 text-cyanLight border border-cyanAccent/40 flex items-center gap-1.5 transition">
             <span>⇄</span> Split View
-          </button>
-
-          <button id="runDeepAiBtn" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-violetAccent/25 text-violet-200 border border-violetAccent/60 hover:bg-violetAccent hover:text-white flex items-center gap-1.5 transition" title="Run Deep AI model for hair, products & complex objects">
-            <span>✨</span> Deep AI HD
           </button>
 
           <button id="toggleTuningPanelBtn" type="button" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate800 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition">
@@ -367,7 +363,7 @@
         <!-- Expandable Tuning Panel -->
         <div id="tuningPanelBox" class="hidden mt-3 bg-slate900 border border-slate-800 rounded-2xl p-3.5 space-y-3">
           <div>
-            <div class="text-[11px] font-bold text-slate-400 mb-1.5">Cutout Engine Mode</div>
+            <div class="text-[11px] font-bold text-slate-400 mb-1.5">Cutout Mode</div>
             <div class="grid grid-cols-3 gap-2">
               <button type="button" data-mode="AUTO_SMART" class="mode-chip py-1.5 px-2 rounded-xl text-xs font-bold bg-cyanAccent text-black transition">Smart Auto</button>
               <button type="button" data-mode="STUDIO_SOLID" class="mode-chip py-1.5 px-2 rounded-xl text-xs font-medium bg-slate800 text-slate-300 transition">Color / Studio</button>
@@ -376,13 +372,13 @@
           </div>
 
           <div class="flex items-center gap-3">
-            <label for="toleranceSlider" id="toleranceLabel" class="text-xs text-white w-28 shrink-0">Sensitivity: 50%</label>
-            <input id="toleranceSlider" type="range" min="5" max="95" value="50" class="flex-1 h-1.5 bg-slate800 rounded-lg cursor-pointer" />
+            <label for="toleranceSlider" id="toleranceLabel" class="text-xs text-white w-28 shrink-0">Sensitivity: 35%</label>
+            <input id="toleranceSlider" type="range" min="5" max="90" value="35" class="flex-1 h-1.5 bg-slate800 rounded-lg cursor-pointer" />
           </div>
 
           <div class="flex items-center gap-3">
-            <label for="featherSlider" id="featherLabel" class="text-xs text-white w-28 shrink-0">Soft Edge: 2px</label>
-            <input id="featherSlider" type="range" min="0" max="12" value="2" class="flex-1 h-1.5 bg-slate800 rounded-lg cursor-pointer" />
+            <label for="featherSlider" id="featherLabel" class="text-xs text-white w-28 shrink-0">Soft Edge: 3px</label>
+            <input id="featherSlider" type="range" min="0" max="12" value="3" class="flex-1 h-1.5 bg-slate800 rounded-lg cursor-pointer" />
           </div>
 
           <div class="flex items-center justify-between pt-1">
@@ -394,18 +390,11 @@
           </div>
         </div>
 
-        <!-- Dual Download Buttons: Transparent PNG + White/Selected Background PNG -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
-          <button id="downloadPngMainBtn" type="button" class="w-full h-11 rounded-2xl bg-cyanAccent hover:bg-cyanLight text-black font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyanAccent/20 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-            Download Transparent PNG
-          </button>
-
-          <button id="downloadWithBgBtn" type="button" class="w-full h-11 rounded-2xl bg-emeraldSuccess hover:bg-emerald-400 text-black font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emeraldSuccess/20 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            Save with White / Selected Bg
-          </button>
-        </div>
+        <!-- Primary Download Button -->
+        <button id="downloadPngMainBtn" type="button" class="mt-3 w-full h-12 rounded-2xl bg-cyanAccent hover:bg-cyanLight text-black font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-cyanAccent/20 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Download Transparent PNG
+        </button>
       </div>
     </section>
 
@@ -559,7 +548,7 @@
   </nav>
 
   <script>
-    // ==================== SAMPLE PRESETS ====================
+    // ==================== SAMPLE PRESETS (Ported from SamplePresets.kt) ====================
     const SAMPLE_PRESETS = [
       {
         id: 'sneaker',
@@ -567,7 +556,6 @@
         category: 'Product',
         description: 'Studio shoe with clean contrast backdrop',
         iconTag: '👟',
-        isSynthetic: true,
         generate: generateSneakerSample
       },
       {
@@ -576,7 +564,6 @@
         category: 'Portrait',
         description: 'Fashion model silhouette on soft backdrop',
         iconTag: '👤',
-        isSynthetic: true,
         generate: generatePortraitSample
       },
       {
@@ -585,7 +572,6 @@
         category: 'Gadget',
         description: 'Metallic timepiece with sharp perimeter',
         iconTag: '⌚',
-        isSynthetic: true,
         generate: generateWatchSample
       },
       {
@@ -594,7 +580,6 @@
         category: 'Graphic / Logo',
         description: 'High contrast sticker on light canvas',
         iconTag: '⚡',
-        isSynthetic: true,
         generate: generateLogoSample
       }
     ];
@@ -606,6 +591,13 @@
       ctx.fillStyle = 'rgb(238, 240, 245)';
       ctx.fillRect(0, 0, 800, 800);
 
+      // Drop shadow
+      ctx.fillStyle = 'rgba(100, 110, 130, 0.18)';
+      ctx.beginPath();
+      ctx.ellipse(420, 590, 260, 30, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Sneaker body
       const grad = ctx.createLinearGradient(200, 300, 600, 520);
       grad.addColorStop(0, 'rgb(6, 182, 212)');
       grad.addColorStop(1, 'rgb(139, 92, 246)');
@@ -621,6 +613,7 @@
       ctx.closePath();
       ctx.fill();
 
+      // Sneaker sole
       ctx.fillStyle = '#FFFFFF';
       ctx.beginPath();
       ctx.moveTo(180, 530);
@@ -631,6 +624,7 @@
       ctx.closePath();
       ctx.fill();
 
+      // Stripe accent
       ctx.strokeStyle = 'rgb(244, 63, 94)';
       ctx.lineWidth = 18;
       ctx.lineCap = 'round';
@@ -645,25 +639,32 @@
       const c = document.createElement('canvas');
       c.width = 800; c.height = 800;
       const ctx = c.getContext('2d');
-      ctx.fillStyle = 'rgb(251, 191, 36)';
+      const bg = ctx.createLinearGradient(0, 0, 800, 800);
+      bg.addColorStop(0, 'rgb(251, 191, 36)');
+      bg.addColorStop(1, 'rgb(249, 115, 22)');
+      ctx.fillStyle = bg;
       ctx.fillRect(0, 0, 800, 800);
 
+      // Hair / Hat volume
       ctx.fillStyle = 'rgb(15, 23, 42)';
       ctx.beginPath();
       ctx.ellipse(400, 260, 140, 80, 0, 0, Math.PI * 2);
       ctx.fill();
 
+      // Head
       ctx.fillStyle = 'rgb(30, 41, 59)';
       ctx.beginPath();
       ctx.arc(400, 320, 130, 0, Math.PI * 2);
       ctx.fill();
 
+      // Sunglasses
       ctx.fillStyle = 'rgb(34, 211, 238)';
       ctx.beginPath();
       ctx.roundRect(320, 305, 65, 35, 10);
       ctx.roundRect(415, 305, 65, 35, 10);
       ctx.fill();
 
+      // Torso
       ctx.fillStyle = 'rgb(30, 41, 59)';
       ctx.beginPath();
       ctx.moveTo(210, 800);
@@ -681,27 +682,32 @@
       ctx.fillStyle = 'rgb(215, 220, 228)';
       ctx.fillRect(0, 0, 800, 800);
 
+      // Watch Straps
       ctx.fillStyle = 'rgb(15, 23, 42)';
       ctx.beginPath();
       ctx.roundRect(330, 80, 140, 640, 24);
       ctx.fill();
 
+      // Watch Case
       ctx.fillStyle = 'rgb(51, 65, 85)';
       ctx.beginPath();
       ctx.arc(400, 400, 160, 0, Math.PI * 2);
       ctx.fill();
 
+      // Inner Bezel
       ctx.fillStyle = 'rgb(2, 6, 23)';
       ctx.beginPath();
       ctx.arc(400, 400, 138, 0, Math.PI * 2);
       ctx.fill();
 
+      // Dial Ring
       ctx.strokeStyle = 'rgb(6, 182, 212)';
       ctx.lineWidth = 10;
       ctx.beginPath();
       ctx.arc(400, 400, 110, 0, Math.PI * 2);
       ctx.stroke();
 
+      // Watch Hands
       ctx.strokeStyle = '#FFFFFF';
       ctx.lineWidth = 8;
       ctx.lineCap = 'round';
@@ -735,138 +741,8 @@
       return c;
     }
 
-    // ==================== GOOGLE MEDIAPIPE NEURAL AI ENGINE ====================
-    let mpSegmenter = null;
-    let mpResolveCurrent = null;
-
-    function getMediaPipeSegmenter() {
-      if (mpSegmenter) return mpSegmenter;
-      if (typeof window.SelfieSegmentation === 'undefined') return null;
-      try {
-        const seg = new window.SelfieSegmentation({
-          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1.1675469240/${file}`
-        });
-        seg.setOptions({ modelSelection: 1 });
-        seg.onResults((results) => {
-          if (mpResolveCurrent) {
-            const fn = mpResolveCurrent;
-            mpResolveCurrent = null;
-            fn(results.segmentationMask);
-          }
-        });
-        mpSegmenter = seg;
-        return seg;
-      } catch (err) {
-        return null;
-      }
-    }
-
-    async function computeNeuralMaskCanvas(sourceCanvas) {
-      const seg = getMediaPipeSegmenter();
-      if (!seg) return null;
-      return new Promise((resolve) => {
-        let timedOut = false;
-        const timer = setTimeout(() => {
-          timedOut = true;
-          mpResolveCurrent = null;
-          resolve(null);
-        }, 8000);
-
-        mpResolveCurrent = (maskImg) => {
-          if (timedOut) return;
-          clearTimeout(timer);
-          if (!maskImg) { resolve(null); return; }
-
-          const mc = document.createElement('canvas');
-          mc.width = sourceCanvas.width;
-          mc.height = sourceCanvas.height;
-          const mctx = mc.getContext('2d');
-          mctx.clearRect(0, 0, mc.width, mc.height);
-          mctx.drawImage(maskImg, 0, 0, mc.width, mc.height);
-
-          // MediaPipe's segmentationMask stores the person probability in the ALPHA channel (d[i+3])
-          // on WebGL backends, or in the RED channel (d[i]) on CPU backends.
-          // We inspect both channels and normalize the mask into R=G=B=val, A=255!
-          const imgData = mctx.getImageData(0, 0, mc.width, mc.height);
-          const d = imgData.data;
-
-          let minA = 255, maxA = 0, minR = 255, maxR = 0;
-          for (let i = 0; i < d.length; i += 16) {
-            const r = d[i], a = d[i + 3];
-            if (a < minA) minA = a;
-            if (a > maxA) maxA = a;
-            if (r < minR) minR = r;
-            if (r > maxR) maxR = r;
-          }
-
-          const useAlpha = (maxA - minA) >= (maxR - minR);
-          let fgCount = 0;
-          const total = mc.width * mc.height;
-
-          for (let i = 0; i < d.length; i += 4) {
-            const val = useAlpha ? d[i + 3] : d[i];
-            if (val > 110) fgCount++;
-            d[i] = val;
-            d[i + 1] = val;
-            d[i + 2] = val;
-            d[i + 3] = 255;
-          }
-
-          if (fgCount / total < 0.015) {
-            resolve(null);
-          } else {
-            mctx.putImageData(imgData, 0, 0);
-            resolve(mc);
-          }
-        };
-
-        Promise.resolve(seg.send({ image: sourceCanvas })).catch(() => {
-          clearTimeout(timer);
-          mpResolveCurrent = null;
-          resolve(null);
-        });
-      });
-    }
-
-    // ==================== DEEP AI (@imgly/background-removal) ENGINE ====================
-    let imglyRemoveBg = null;
-    async function runDeepAiBackgroundRemoval(sourceCanvas, onProgressText) {
-      try {
-        if (!imglyRemoveBg) {
-          if (onProgressText) onProgressText('✨ Loading Deep AI neural network...');
-          const mod = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
-          imglyRemoveBg = mod.removeBackground || mod.default;
-        }
-        const blob = await new Promise(r => sourceCanvas.toBlob(r, 'image/png'));
-        const resultBlob = await imglyRemoveBg(blob, {
-          progress: (key, current, total) => {
-            if (total > 0 && onProgressText) {
-              const pct = Math.min(99, Math.round((current / total) * 100));
-              onProgressText(`✨ Deep AI HD Processing (${pct}%)...`);
-            }
-          }
-        });
-        const url = URL.createObjectURL(resultBlob);
-        return new Promise((resolve) => {
-          const img = new Image();
-          img.onload = () => {
-            const out = document.createElement('canvas');
-            out.width = sourceCanvas.width;
-            out.height = sourceCanvas.height;
-            out.getContext('2d').drawImage(img, 0, 0, out.width, out.height);
-            URL.revokeObjectURL(url);
-            resolve(out);
-          };
-          img.onerror = () => resolve(null);
-          img.src = url;
-        });
-      } catch (e) {
-        return null;
-      }
-    }
-
-    // ==================== COMPOSITING & EDGE-CONNECTED FLOOD FILL ENGINE ====================
-    function executeCutoutOnCanvas(sourceCanvas, settings, strokes, aiMaskCanvas, deepAiCanvas) {
+    // ==================== BACKGROUND REMOVAL ENGINE (Ported from BackgroundRemovalEngine.kt) ====================
+    function executeCutoutOnCanvas(sourceCanvas, settings, strokes) {
       const width = sourceCanvas.width;
       const height = sourceCanvas.height;
       const srcCtx = sourceCanvas.getContext('2d');
@@ -880,57 +756,12 @@
       const outImageData = outCtx.createImageData(width, height);
       const dst = outImageData.data;
 
-      if (settings.mode === 'AUTO_SMART' && deepAiCanvas) {
-        const dCanvasScaled = document.createElement('canvas');
-        dCanvasScaled.width = width;
-        dCanvasScaled.height = height;
-        const dsCtx = dCanvasScaled.getContext('2d');
-        if (settings.featherRadius > 1) {
-          dsCtx.filter = `blur(${Math.max(0, settings.featherRadius - 1)}px)`;
-        }
-        dsCtx.drawImage(deepAiCanvas, 0, 0, width, height);
-        const dData = dsCtx.getImageData(0, 0, width, height).data;
-        for (let i = 0; i < src.length; i += 4) {
-          dst[i] = src[i];
-          dst[i + 1] = src[i + 1];
-          dst[i + 2] = src[i + 2];
-          const a = dData[i + 3];
-          dst[i + 3] = settings.invertMask ? (255 - a) : a;
-        }
-      } else if (settings.mode === 'AUTO_SMART' && aiMaskCanvas) {
-        // Use Google MediaPipe Normalized Grayscale Mask (R=G=B=mask, A=255)
-        const mCanvas = document.createElement('canvas');
-        mCanvas.width = width;
-        mCanvas.height = height;
-        const mCtx = mCanvas.getContext('2d');
-        if (settings.featherRadius > 0) {
-          mCtx.filter = `blur(${settings.featherRadius * 1.25}px)`;
-        }
-        mCtx.drawImage(aiMaskCanvas, 0, 0, width, height);
-        const maskPixels = mCtx.getImageData(0, 0, width, height).data;
-
-        const cutoff = Math.max(25, Math.min(225, Math.round((settings.tolerance / 100) * 180 + 25)));
-        const band = Math.max(16, settings.featherRadius * 14 + 18);
-
-        for (let i = 0; i < src.length; i += 4) {
-          const maskVal = maskPixels[i]; // Guaranteed normalized [0..255]
-          let alpha;
-          if (maskVal >= cutoff + band) {
-            alpha = 255;
-          } else if (maskVal <= cutoff - band) {
-            alpha = 0;
-          } else {
-            alpha = Math.round(((maskVal - (cutoff - band)) / (band * 2)) * 255);
-          }
-          dst[i] = src[i];
-          dst[i + 1] = src[i + 1];
-          dst[i + 2] = src[i + 2];
-          dst[i + 3] = settings.invertMask ? (255 - alpha) : alpha;
-        }
+      if (settings.mode === 'STUDIO_SOLID') {
+        processStudioSolid(src, dst, width, height, settings);
       } else if (settings.mode === 'HIGH_CONTRAST') {
         processHighContrast(src, dst, width, height, settings);
       } else {
-        processBorderFloodFill(src, dst, width, height, settings);
+        processSmartAuto(src, dst, width, height, settings);
       }
 
       if (strokes && strokes.length > 0) {
@@ -941,143 +772,116 @@
       return outCanvas;
     }
 
-    function processBorderFloodFill(src, dst, width, height, settings) {
-      const totalPixels = width * height;
-      const visited = new Uint8Array(totalPixels);
-      const isBg = new Uint8Array(totalPixels);
+    function processSmartAuto(src, dst, width, height, settings) {
+      let sumR = 0, sumG = 0, sumB = 0, borderSamples = 0;
+      const stepX = Math.max(1, Math.floor(width / 60));
+      const stepY = Math.max(1, Math.floor(height / 60));
+      const borderDepthY = Math.max(2, Math.floor(height * 0.03));
+      const borderDepthX = Math.max(2, Math.floor(width * 0.03));
 
-      for (let i = 0; i < totalPixels * 4; i += 4) {
-        dst[i] = src[i];
-        dst[i + 1] = src[i + 1];
-        dst[i + 2] = src[i + 2];
-        dst[i + 3] = 255;
-      }
-
-      const globalTol = (settings.tolerance / 100) * 110 + 15;
-      const stepTol = Math.max(10, (settings.tolerance / 100) * 38 + 8);
-
-      const queue = new Int32Array(totalPixels);
-      let head = 0, tail = 0;
-
-      let seedR = 0, seedG = 0, seedB = 0;
-      if (settings.sampledColor) {
-        seedR = settings.sampledColor[0];
-        seedG = settings.sampledColor[1];
-        seedB = settings.sampledColor[2];
-      } else {
-        // Sample TOP corners and TOP edge only (never bottom edge where a subject's torso sits)
-        let sumR = 0, sumG = 0, sumB = 0, cnt = 0;
-        for (let x = 0; x < width; x += 4) {
-          const iTop = x * 4;
-          sumR += src[iTop];
-          sumG += src[iTop + 1];
-          sumB += src[iTop + 2];
-          cnt++;
-        }
-        seedR = Math.round(sumR / cnt);
-        seedG = Math.round(sumG / cnt);
-        seedB = Math.round(sumB / cnt);
-      }
-
-      function pushPixel(idx) {
-        if (visited[idx]) return;
-        visited[idx] = 1;
-        isBg[idx] = 1;
-        queue[tail++] = idx;
-      }
-
-      // Enqueue top, left, and right border pixels matching the background seed
-      for (let x = 0; x < width; x++) {
-        const topIdx = x;
-        if (colorDistIdx(src, topIdx * 4, seedR, seedG, seedB) <= globalTol * 1.25) {
-          pushPixel(topIdx);
-        }
-        const botIdx = (height - 1) * width + x;
-        if (colorDistIdx(src, botIdx * 4, seedR, seedG, seedB) <= globalTol) {
-          pushPixel(botIdx);
-        }
-      }
-      for (let y = 1; y < height - 1; y++) {
-        const leftIdx = y * width;
-        const rightIdx = y * width + (width - 1);
-        if (colorDistIdx(src, leftIdx * 4, seedR, seedG, seedB) <= globalTol * 1.2) {
-          pushPixel(leftIdx);
-        }
-        if (colorDistIdx(src, rightIdx * 4, seedR, seedG, seedB) <= globalTol * 1.2) {
-          pushPixel(rightIdx);
+      for (let y = 0; y < borderDepthY; y++) {
+        const topRow = y * width;
+        const botRow = (height - 1 - y) * width;
+        for (let x = 0; x < width; x += stepX) {
+          const i1 = (topRow + x) * 4;
+          const i2 = (botRow + x) * 4;
+          sumR += src[i1] + src[i2];
+          sumG += src[i1 + 1] + src[i2 + 1];
+          sumB += src[i1 + 2] + src[i2 + 2];
+          borderSamples += 2;
         }
       }
 
-      if (settings.sampledColor && settings.eyedropperPoint) {
-        const ex = Math.min(width - 1, Math.max(0, Math.round(settings.eyedropperPoint.x * width)));
-        const ey = Math.min(height - 1, Math.max(0, Math.round(settings.eyedropperPoint.y * height)));
-        pushPixel(ey * width + ex);
-      }
-
-      const globalTolSq = globalTol * globalTol;
-      const stepTolSq = stepTol * stepTol;
-
-      while (head < tail) {
-        const curr = queue[head++];
-        const cx = curr % width;
-        const cy = (curr - cx) / width;
-        const c4 = curr * 4;
-        const cr = src[c4], cg = src[c4 + 1], cb = src[c4 + 2];
-
-        const neighbors = [];
-        if (cx > 0) neighbors.push(curr - 1);
-        if (cx < width - 1) neighbors.push(curr + 1);
-        if (cy > 0) neighbors.push(curr - width);
-        if (cy < height - 1) neighbors.push(curr + width);
-
-        for (let k = 0; k < neighbors.length; k++) {
-          const nIdx = neighbors[k];
-          if (visited[nIdx]) continue;
-          const n4 = nIdx * 4;
-          const nr = src[n4], ng = src[n4 + 1], nb = src[n4 + 2];
-
-          const sr = nr - cr, sg = ng - cg, sb = nb - cb;
-          const stepDistSq = sr * sr + sg * sg + sb * sb;
-
-          const gr = nr - seedR, gg = ng - seedG, gb = nb - seedB;
-          const globalDistSq = gr * gr + gg * gg + gb * gb;
-
-          if (stepDistSq <= stepTolSq && globalDistSq <= globalTolSq) {
-            visited[nIdx] = 1;
-            isBg[nIdx] = 1;
-            queue[tail++] = nIdx;
-          }
+      for (let x = 0; x < borderDepthX; x++) {
+        for (let y = 0; y < height; y += stepY) {
+          const i1 = (y * width + x) * 4;
+          const i2 = (y * width + (width - 1 - x)) * 4;
+          sumR += src[i1] + src[i2];
+          sumG += src[i1 + 1] + src[i2 + 1];
+          sumB += src[i1 + 2] + src[i2 + 2];
+          borderSamples += 2;
         }
       }
 
-      const feather = Math.max(1, Math.round(settings.featherRadius));
+      const avgBgR = Math.floor(sumR / borderSamples);
+      const avgBgG = Math.floor(sumG / borderSamples);
+      const avgBgB = Math.floor(sumB / borderSamples);
+
+      const baseTolerance = (settings.tolerance / 100) * 160 + 15;
+      const feather = Math.max(1, settings.featherRadius) * 6;
+      const centerX = width / 2;
+      const centerY = height / 2;
+
       for (let y = 0; y < height; y++) {
         const rowOffset = y * width;
+        const dy = (y - centerY) / centerY;
         for (let x = 0; x < width; x++) {
-          const idx = rowOffset + x;
-          let alpha = isBg[idx] ? 0 : 255;
+          const idx = (rowOffset + x) * 4;
+          const r = src[idx], g = src[idx + 1], b = src[idx + 2];
+          const dr = r - avgBgR, dg = g - avgBgG, db = b - avgBgB;
+          const colorDist = Math.sqrt(dr * dr + dg * dg + db * db);
 
-          if (feather > 0 && x >= feather && x < width - feather && y >= feather && y < height - feather) {
-            const b1 = isBg[idx - feather];
-            const b2 = isBg[idx + feather];
-            const b3 = isBg[idx - feather * width];
-            const b4 = isBg[idx + feather * width];
-            const bgSum = isBg[idx] + b1 + b2 + b3 + b4;
-            if (bgSum > 0 && bgSum < 5) {
-              alpha = Math.round(((5 - bgSum) / 5) * 255);
-            }
+          const dx = (x - centerX) / centerX;
+          const radialFactor = Math.sqrt(dx * dx + dy * dy);
+          const centerBonus = Math.max(0, (1 - radialFactor) * 35);
+
+          const effectiveDist = colorDist + centerBonus;
+          let alpha;
+          if (effectiveDist >= baseTolerance + feather) {
+            alpha = 255;
+          } else if (effectiveDist <= baseTolerance - feather) {
+            alpha = 0;
+          } else {
+            const factor = (effectiveDist - (baseTolerance - feather)) / (feather * 2);
+            alpha = Math.round(Math.min(1, Math.max(0, factor)) * 255);
           }
 
-          dst[idx * 4 + 3] = settings.invertMask ? (255 - alpha) : alpha;
+          dst[idx] = r;
+          dst[idx + 1] = g;
+          dst[idx + 2] = b;
+          dst[idx + 3] = settings.invertMask ? (255 - alpha) : alpha;
         }
       }
     }
 
-    function colorDistIdx(src, i4, r2, g2, b2) {
-      const dr = src[i4] - r2;
-      const dg = src[i4 + 1] - g2;
-      const db = src[i4 + 2] - b2;
-      return Math.sqrt(dr * dr + dg * dg + db * db);
+    function processStudioSolid(src, dst, width, height, settings) {
+      let tr, tg, tb;
+      if (settings.sampledColor) {
+        tr = settings.sampledColor[0];
+        tg = settings.sampledColor[1];
+        tb = settings.sampledColor[2];
+      } else {
+        const c1 = 0;
+        const c2 = (width - 1) * 4;
+        const c3 = ((height - 1) * width) * 4;
+        const c4 = (height * width - 1) * 4;
+        tr = Math.floor((src[c1] + src[c2] + src[c3] + src[c4]) / 4);
+        tg = Math.floor((src[c1 + 1] + src[c2 + 1] + src[c3 + 1] + src[c4 + 1]) / 4);
+        tb = Math.floor((src[c1 + 2] + src[c2 + 2] + src[c3 + 2] + src[c4 + 2]) / 4);
+      }
+
+      const threshold = (settings.tolerance / 100) * 180 + 10;
+      const feather = Math.max(1, settings.featherRadius) * 5;
+      const total = width * height * 4;
+
+      for (let i = 0; i < total; i += 4) {
+        const r = src[i], g = src[i + 1], b = src[i + 2];
+        const dr = r - tr, dg = g - tg, db = b - tb;
+        const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+        let alpha;
+        if (dist >= threshold + feather) {
+          alpha = 255;
+        } else if (dist <= threshold - feather) {
+          alpha = 0;
+        } else {
+          const factor = (dist - (threshold - feather)) / (feather * 2);
+          alpha = Math.round(Math.min(1, Math.max(0, factor)) * 255);
+        }
+        dst[i] = r;
+        dst[i + 1] = g;
+        dst[i + 2] = b;
+        dst[i + 3] = settings.invertMask ? (255 - alpha) : alpha;
+      }
     }
 
     function processHighContrast(src, dst, width, height, settings) {
@@ -1151,29 +955,24 @@
 
     // ==================== APPLICATION STATE ====================
     const state = {
-      screen: 'HOME',
-      currentItem: null,
+      screen: 'HOME', // HOME | SINGLE | BATCH
+      currentItem: null, // { id, title, origCanvas, previewOrigCanvas, cutoutCanvas, width, height, timeMs }
       settings: {
         mode: 'AUTO_SMART',
-        tolerance: 50,
-        featherRadius: 2,
+        tolerance: 35,
+        featherRadius: 3,
         sampledColor: null,
-        eyedropperPoint: null,
         invertMask: false
       },
-      selectedBackdrop: {
-        type: 'CHECKERBOARD_DARK',
-        color: '#FFFFFF'
-      },
-      strokes: [],
-      splitView: false,
+      strokes: [], // [{ tool: 'ERASER'|'RESTORE', radiusNorm, points: [{xNorm, yNorm}] }]
+      splitView: true,
       splitFraction: 0.5,
       zoom: 1,
       eyedropperMode: false,
       touchUpTool: 'ERASER',
       touchUpBrushPx: 24,
       tempStrokes: [],
-      batchQueue: []
+      batchQueue: [] // [{ id, title, origCanvas, cutoutCanvas, width, height, state: 'PENDING'|'PROCESSING'|'COMPLETED', timeMs }]
     };
 
     // ==================== NAVIGATION & UI HELPERS ====================
@@ -1183,7 +982,7 @@
       el.textContent = msg;
       el.classList.remove('hidden');
       if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => el.classList.add('hidden'), 3200);
+      toastTimer = setTimeout(() => el.classList.add('hidden'), 2800);
     }
 
     function navigateTo(screen) {
@@ -1192,6 +991,7 @@
       document.getElementById('screenSingle').classList.toggle('hidden', screen !== 'SINGLE');
       document.getElementById('screenBatch').classList.toggle('hidden', screen !== 'BATCH');
 
+      // Update Nav Buttons
       const mapping = [
         { btn: 'railHomeBtn', active: screen === 'HOME' },
         { btn: 'railSingleBtn', active: screen === 'SINGLE' },
@@ -1221,60 +1021,28 @@
     }
 
     // ==================== SINGLE CUTOUT WORKFLOW ====================
-    async function loadCanvasIntoSingle(title, origCanvas, isSynthetic = false) {
+    function loadCanvasIntoSingle(title, origCanvas) {
       state.strokes = [];
       state.zoom = 1;
-      state.settings.sampledColor = null;
-      state.settings.eyedropperPoint = null;
       applyZoomTransform();
-
-      const previewOrig = scaleCanvas(origCanvas, 960);
+      const previewOrig = scaleCanvas(origCanvas, 900);
       state.currentItem = {
         id: 'item_' + Date.now(),
         title: title,
         origCanvas: origCanvas,
         previewOrigCanvas: previewOrig,
-        aiMaskCanvas: null,
-        deepAiCanvas: null,
         cutoutCanvas: null,
         width: origCanvas.width,
         height: origCanvas.height,
         timeMs: 0
       };
-
-      navigateTo('SINGLE');
-
-      const banner = document.getElementById('singleProcessingBanner');
-      const bannerText = document.getElementById('processingBannerText');
-      banner.classList.remove('hidden');
-      bannerText.textContent = '🧠 AI Neural Network is removing background...';
-
-      const t0 = performance.now();
-      if (!isSynthetic) {
-        // Tier 1: Run Google MediaPipe Neural Portrait Segmentation
-        const mask = await computeNeuralMaskCanvas(previewOrig);
-        if (mask) {
-          state.currentItem.aiMaskCanvas = mask;
-        } else {
-          // Tier 2: If no portrait found (or MediaPipe unavailable), automatically run Deep AI HD!
-          const deepRes = await runDeepAiBackgroundRemoval(
-            previewOrig,
-            (msg) => { bannerText.textContent = msg; }
-          );
-          if (deepRes) {
-            state.currentItem.deepAiCanvas = deepRes;
-          }
-        }
-      }
-      state.currentItem.timeMs = Math.max(1, Math.round(performance.now() - t0));
-      banner.classList.add('hidden');
-
       recomputeSinglePreview();
+      navigateTo('SINGLE');
     }
 
     function loadPresetIntoSingle(preset) {
       const c = preset.generate();
-      loadCanvasIntoSingle(preset.title, c, true);
+      loadCanvasIntoSingle(preset.title, c);
       showToast('Loaded preset: ' + preset.title);
     }
 
@@ -1284,13 +1052,13 @@
       const cutout = executeCutoutOnCanvas(
         state.currentItem.previewOrigCanvas,
         state.settings,
-        state.strokes,
-        state.currentItem.aiMaskCanvas,
-        state.currentItem.deepAiCanvas
+        state.strokes
       );
-      const elapsed = state.currentItem.timeMs || Math.max(1, Math.round(performance.now() - t0));
+      const elapsed = Math.max(1, Math.round(performance.now() - t0));
       state.currentItem.cutoutCanvas = cutout;
+      state.currentItem.timeMs = elapsed;
 
+      // Render onto visible canvases
       const cutoutEl = document.getElementById('cutoutCanvas');
       cutoutEl.width = cutout.width;
       cutoutEl.height = cutout.height;
@@ -1303,10 +1071,7 @@
 
       document.getElementById('singleTitle').textContent = state.currentItem.title;
       document.getElementById('singleDims').textContent = `${state.currentItem.width} × ${state.currentItem.height}`;
-      const engineTag = state.currentItem.deepAiCanvas
-        ? '✨ Deep AI HD'
-        : (state.currentItem.aiMaskCanvas ? '🧠 Neural AI' : '⚡ Studio Cutout');
-      document.getElementById('singleSpeedBadge').textContent = `${engineTag} (${elapsed}ms)`;
+      document.getElementById('singleSpeedBadge').textContent = `⚡ ${elapsed}ms`;
       updateSplitViewClip();
     }
 
@@ -1329,6 +1094,7 @@
       const pct = (state.splitFraction * 100).toFixed(2);
       divider.style.left = pct + '%';
 
+      // Calculate clip relative to the rendered canvas inside the viewport
       const viewportRect = document.getElementById('previewViewport').getBoundingClientRect();
       const canvasRect = origEl.getBoundingClientRect();
       if (canvasRect.width > 0 && viewportRect.width > 0) {
@@ -1354,62 +1120,20 @@
       setTimeout(updateSplitViewClip, 80);
     }
 
-    function buildFullResCutoutCanvas() {
-      return executeCutoutOnCanvas(
-        state.currentItem.origCanvas,
-        state.settings,
-        state.strokes,
-        state.currentItem.aiMaskCanvas,
-        state.currentItem.deepAiCanvas
-      );
-    }
-
     function downloadFullResSingle() {
       if (!state.currentItem) return;
       const banner = document.getElementById('singleProcessingBanner');
       banner.classList.remove('hidden');
       setTimeout(() => {
-        const highRes = buildFullResCutoutCanvas();
+        const highRes = executeCutoutOnCanvas(
+          state.currentItem.origCanvas,
+          state.settings,
+          state.strokes
+        );
         const safeName = state.currentItem.title.replace(/[^a-zA-Z0-9_-]/g, '_');
-        triggerCanvasDownload(highRes, `cutout_${safeName}_transparent.png`);
+        triggerCanvasDownload(highRes, `cutout_${safeName}.png`);
         banner.classList.add('hidden');
-        showToast('Downloaded true transparent PNG!');
-      }, 30);
-    }
-
-    function downloadWithSelectedBackground() {
-      if (!state.currentItem) return;
-      const banner = document.getElementById('singleProcessingBanner');
-      banner.classList.remove('hidden');
-      setTimeout(() => {
-        const highRes = buildFullResCutoutCanvas();
-        const out = document.createElement('canvas');
-        out.width = highRes.width;
-        out.height = highRes.height;
-        const ctx = out.getContext('2d');
-
-        if (state.selectedBackdrop.type === 'STUDIO_GRADIENT') {
-          const grad = ctx.createRadialGradient(
-            out.width / 2, out.height / 2, 10,
-            out.width / 2, out.height / 2, Math.max(out.width, out.height) * 0.7
-          );
-          grad.addColorStop(0, '#334155');
-          grad.addColorStop(1, '#0F172A');
-          ctx.fillStyle = grad;
-        } else if (state.selectedBackdrop.type === 'PURE_BLACK') {
-          ctx.fillStyle = '#090D16';
-        } else if (state.selectedBackdrop.type === 'CUSTOM_COLOR') {
-          ctx.fillStyle = state.selectedBackdrop.color;
-        } else {
-          ctx.fillStyle = '#FFFFFF';
-        }
-        ctx.fillRect(0, 0, out.width, out.height);
-        ctx.drawImage(highRes, 0, 0);
-
-        const safeName = state.currentItem.title.replace(/[^a-zA-Z0-9_-]/g, '_');
-        triggerCanvasDownload(out, `cutout_${safeName}_studio.png`);
-        banner.classList.add('hidden');
-        showToast('Saved cutout with clean studio background!');
+        showToast('Downloaded full-resolution transparent PNG!');
       }, 30);
     }
 
@@ -1439,9 +1163,7 @@
       const tempCutout = executeCutoutOnCanvas(
         state.currentItem.previewOrigCanvas,
         state.settings,
-        state.tempStrokes,
-        state.currentItem.aiMaskCanvas,
-        state.currentItem.deepAiCanvas
+        state.tempStrokes
       );
       const el = document.getElementById('touchUpCanvasEl');
       el.width = tempCutout.width;
@@ -1450,17 +1172,15 @@
     }
 
     // ==================== BATCH PROCESSING WORKFLOW ====================
-    function addCanvasItemToBatch(title, origCanvas, isSynthetic = false) {
-      const scaled = scaleCanvas(origCanvas, 1000);
+    function addCanvasItemToBatch(title, origCanvas) {
+      const scaled = scaleCanvas(origCanvas, 1200);
       state.batchQueue.push({
         id: 'batch_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
         title: title,
         origCanvas: scaled,
-        aiMaskCanvas: null,
         cutoutCanvas: null,
         width: scaled.width,
         height: scaled.height,
-        isSynthetic: isSynthetic,
         state: 'PENDING',
         timeMs: 0,
         settings: { ...state.settings }
@@ -1473,6 +1193,7 @@
       const count = q.length;
       document.getElementById('batchQueueCountSubtitle').textContent = `${count} item${count === 1 ? '' : 's'} in queue`;
 
+      // Update badges
       ['railBatchBadge', 'mobBatchBadge'].forEach(id => {
         const b = document.getElementById(id);
         if (count > 0) {
@@ -1527,6 +1248,7 @@
         exportBtn.classList.add('hidden');
       }
 
+      // Render cards
       gridEl.innerHTML = '';
       q.forEach(item => {
         const card = document.createElement('div');
@@ -1541,7 +1263,7 @@
           badgeText = '✓ PNG';
         } else if (item.state === 'PROCESSING') {
           badgeClass = 'bg-cyanAccent text-black font-bold';
-          badgeText = '⚡ AI Working';
+          badgeText = '⚡ Processing';
         }
 
         card.innerHTML = `
@@ -1561,7 +1283,7 @@
           </div>
         `;
         card.addEventListener('click', () => {
-          loadCanvasIntoSingle(item.title, item.origCanvas, item.isSynthetic);
+          loadCanvasIntoSingle(item.title, item.origCanvas);
         });
         gridEl.appendChild(card);
       });
@@ -1574,7 +1296,7 @@
       const bar = document.getElementById('batchProgressBar');
       const heading = document.getElementById('batchStatusHeading');
       wrap.classList.remove('hidden');
-      heading.textContent = 'Processing Batch with AI...';
+      heading.textContent = 'Processing Batch...';
 
       for (let i = 0; i < q.length; i++) {
         const item = q[i];
@@ -1586,10 +1308,7 @@
 
         const t0 = performance.now();
         const previewCanvas = scaleCanvas(item.origCanvas, 900);
-        if (!item.isSynthetic) {
-          item.aiMaskCanvas = await computeNeuralMaskCanvas(previewCanvas);
-        }
-        item.cutoutCanvas = executeCutoutOnCanvas(previewCanvas, item.settings, [], item.aiMaskCanvas, null);
+        item.cutoutCanvas = executeCutoutOnCanvas(previewCanvas, item.settings, []);
         item.timeMs = Math.max(1, Math.round(performance.now() - t0));
         item.state = 'COMPLETED';
         bar.style.width = Math.round(((i + 1) / q.length) * 100) + '%';
@@ -1623,7 +1342,7 @@
         reader.onload = e => {
           const img = new Image();
           img.onload = () => {
-            const c = scaleImageToCanvas(img, 2048);
+            const c = scaleImageToCanvas(img, 2560);
             resolve({ title: file.name.replace(/\.[^.]+$/, ''), canvas: c });
           };
           img.onerror = reject;
@@ -1650,17 +1369,7 @@
 
     // ==================== INITIALIZATION & EVENT LISTENERS ====================
     window.addEventListener('DOMContentLoaded', () => {
-      // Clear any stale Service Worker caches from v1 so updates always show immediately
-      try {
-        if (window.caches) {
-          caches.keys().then(keys => {
-            keys.forEach(k => {
-              if (k !== 'cutout-pro-v3') caches.delete(k);
-            });
-          });
-        }
-      } catch (_) {}
-
+      // Populate Sample Presets on Home Screen
       const listEl = document.getElementById('samplePresetsList');
       SAMPLE_PRESETS.forEach(preset => {
         const btn = document.createElement('button');
@@ -1691,6 +1400,7 @@
       document.getElementById('singleBackBtn').addEventListener('click', () => navigateTo('HOME'));
       document.getElementById('batchBackBtn').addEventListener('click', () => navigateTo('HOME'));
 
+      // File upload triggers
       const singleInput = document.getElementById('singleFileInput');
       const batchInput = document.getElementById('batchFileInput');
 
@@ -1704,8 +1414,8 @@
         const file = e.target.files && e.target.files[0];
         if (!file) return;
         const { title, canvas } = await loadImageFileToCanvas(file);
-        await loadCanvasIntoSingle(title, canvas, false);
-        showToast(`AI removed background for ${title}!`);
+        loadCanvasIntoSingle(title, canvas);
+        showToast(`Loaded ${title} (${canvas.width}×${canvas.height})`);
         singleInput.value = '';
       });
 
@@ -1714,36 +1424,11 @@
         if (files.length === 0) return;
         for (const f of files) {
           const { title, canvas } = await loadImageFileToCanvas(f);
-          addCanvasItemToBatch(title, canvas, false);
+          addCanvasItemToBatch(title, canvas);
         }
         navigateTo('BATCH');
         showToast(`Added ${files.length} photo${files.length === 1 ? '' : 's'} to batch queue`);
         batchInput.value = '';
-      });
-
-      // Deep AI HD Button
-      document.getElementById('runDeepAiBtn').addEventListener('click', async () => {
-        if (!state.currentItem) return;
-        const banner = document.getElementById('singleProcessingBanner');
-        const bannerText = document.getElementById('processingBannerText');
-        banner.classList.remove('hidden');
-        bannerText.textContent = '✨ Starting Deep AI HD Segmentation...';
-        const t0 = performance.now();
-        const deepResult = await runDeepAiBackgroundRemoval(
-          state.currentItem.previewOrigCanvas,
-          (msg) => { bannerText.textContent = msg; }
-        );
-        banner.classList.add('hidden');
-        if (deepResult) {
-          state.currentItem.deepAiCanvas = deepResult;
-          state.currentItem.timeMs = Math.round(performance.now() - t0);
-          state.settings.mode = 'AUTO_SMART';
-          syncModeButtonsUI();
-          recomputeSinglePreview();
-          showToast('Deep AI HD background removal complete!');
-        } else {
-          showToast('Using Neural AI cutout');
-        }
       });
 
       // Split Comparison Handle Dragging
@@ -1776,19 +1461,16 @@
         const origEl = document.getElementById('cutoutCanvas');
         const rect = origEl.getBoundingClientRect();
         if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
-        const normX = (e.clientX - rect.left) / rect.width;
-        const normY = (e.clientY - rect.top) / rect.height;
-        const x = Math.floor(normX * state.currentItem.previewOrigCanvas.width);
-        const y = Math.floor(normY * state.currentItem.previewOrigCanvas.height);
+        const x = Math.floor(((e.clientX - rect.left) / rect.width) * state.currentItem.previewOrigCanvas.width);
+        const y = Math.floor(((e.clientY - rect.top) / rect.height) * state.currentItem.previewOrigCanvas.height);
         const pixel = state.currentItem.previewOrigCanvas.getContext('2d').getImageData(x, y, 1, 1).data;
         state.settings.sampledColor = [pixel[0], pixel[1], pixel[2]];
-        state.settings.eyedropperPoint = { x: normX, y: normY };
         state.settings.mode = 'STUDIO_SOLID';
         state.eyedropperMode = false;
         document.getElementById('eyedropperHintPill').classList.add('hidden');
         syncModeButtonsUI();
         recomputeSinglePreview();
-        showToast(`Removed connected background color RGB(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`);
+        showToast(`Picked background color RGB(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`);
       });
 
       // Background chips & color dots
@@ -1808,11 +1490,10 @@
 
           clearBackdropClasses();
           const type = btn.getAttribute('data-bg');
-          state.selectedBackdrop.type = type;
           if (type === 'CHECKERBOARD_DARK') backdropBox.classList.add('bg-checker-dark');
           else if (type === 'CHECKERBOARD_LIGHT') backdropBox.classList.add('bg-checker-light');
-          else if (type === 'PURE_WHITE') { backdropBox.style.background = '#FFFFFF'; state.selectedBackdrop.color = '#FFFFFF'; }
-          else if (type === 'PURE_BLACK') { backdropBox.style.background = '#090D16'; state.selectedBackdrop.color = '#090D16'; }
+          else if (type === 'PURE_WHITE') backdropBox.style.background = '#FFFFFF';
+          else if (type === 'PURE_BLACK') backdropBox.style.background = '#090D16';
           else if (type === 'STUDIO_GRADIENT') backdropBox.classList.add('bg-studio-gradient');
         });
       });
@@ -1825,10 +1506,7 @@
           document.querySelectorAll('.bg-dot').forEach(d => d.classList.remove('border-white'));
           dot.classList.add('border-white');
           clearBackdropClasses();
-          const col = dot.getAttribute('data-bgcolor');
-          state.selectedBackdrop.type = 'CUSTOM_COLOR';
-          state.selectedBackdrop.color = col;
-          backdropBox.style.background = col;
+          backdropBox.style.background = dot.getAttribute('data-bgcolor');
         });
       });
 
@@ -1865,6 +1543,7 @@
         document.getElementById('eyedropperHintPill').classList.toggle('hidden', !state.eyedropperMode);
       });
 
+      // Tuning controls
       function syncModeButtonsUI() {
         document.querySelectorAll('.mode-chip').forEach(b => {
           if (b.getAttribute('data-mode') === state.settings.mode) {
@@ -1904,7 +1583,6 @@
       // Save & Share buttons
       document.getElementById('singleTopSaveBtn').addEventListener('click', downloadFullResSingle);
       document.getElementById('downloadPngMainBtn').addEventListener('click', downloadFullResSingle);
-      document.getElementById('downloadWithBgBtn').addEventListener('click', downloadWithSelectedBackground);
       document.getElementById('singleShareBtn').addEventListener('click', async () => {
         if (!state.currentItem || !state.currentItem.cutoutCanvas) return;
         try {
@@ -1913,7 +1591,7 @@
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
               title: 'CutOut Pro - Transparent PNG',
-              text: 'Cut out with CutOut Pro AI',
+              text: 'Cut out with CutOut Pro',
               files: [file]
             });
             return;
@@ -1962,6 +1640,7 @@
         document.getElementById('brushSizeLabel').textContent = `Size: ${state.touchUpBrushPx}px`;
       });
 
+      // TouchUp Canvas Painting
       const tuCanvas = document.getElementById('touchUpCanvasEl');
       let painting = false;
       let activeStroke = null;
@@ -2000,7 +1679,7 @@
 
       // Batch screen bindings
       document.getElementById('batchLoadSamplesBtn').addEventListener('click', () => {
-        SAMPLE_PRESETS.forEach(p => addCanvasItemToBatch(p.title, p.generate(), true));
+        SAMPLE_PRESETS.forEach(p => addCanvasItemToBatch(p.title, p.generate()));
         showToast('Added 4 sample photos to batch queue');
       });
       document.getElementById('batchClearBtn').addEventListener('click', () => {
