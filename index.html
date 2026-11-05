@@ -606,7 +606,6 @@
       ctx.fillStyle = 'rgb(238, 240, 245)';
       ctx.fillRect(0, 0, 800, 800);
 
-      // Sneaker body
       const grad = ctx.createLinearGradient(200, 300, 600, 520);
       grad.addColorStop(0, 'rgb(6, 182, 212)');
       grad.addColorStop(1, 'rgb(139, 92, 246)');
@@ -622,7 +621,6 @@
       ctx.closePath();
       ctx.fill();
 
-      // Sneaker sole
       ctx.fillStyle = '#FFFFFF';
       ctx.beginPath();
       ctx.moveTo(180, 530);
@@ -633,7 +631,6 @@
       ctx.closePath();
       ctx.fill();
 
-      // Stripe accent
       ctx.strokeStyle = 'rgb(244, 63, 94)';
       ctx.lineWidth = 18;
       ctx.lineCap = 'round';
@@ -740,41 +737,32 @@
 
     // ==================== GOOGLE MEDIAPIPE NEURAL AI ENGINE ====================
     let mpSegmenter = null;
-    let mpReadyPromise = null;
     let mpResolveCurrent = null;
 
-    function initMediaPipeSegmenter() {
-      if (mpReadyPromise) return mpReadyPromise;
-      mpReadyPromise = new Promise((resolve) => {
-        try {
-          if (typeof window.SelfieSegmentation === 'undefined') {
-            resolve(null);
-            return;
+    function getMediaPipeSegmenter() {
+      if (mpSegmenter) return mpSegmenter;
+      if (typeof window.SelfieSegmentation === 'undefined') return null;
+      try {
+        const seg = new window.SelfieSegmentation({
+          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1.1675469240/${file}`
+        });
+        seg.setOptions({ modelSelection: 1 });
+        seg.onResults((results) => {
+          if (mpResolveCurrent) {
+            const fn = mpResolveCurrent;
+            mpResolveCurrent = null;
+            fn(results.segmentationMask);
           }
-          const seg = new window.SelfieSegmentation({
-            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1.1675469240/${file}`
-          });
-          seg.setOptions({ modelSelection: 1 });
-          seg.onResults((results) => {
-            if (mpResolveCurrent) {
-              const fn = mpResolveCurrent;
-              mpResolveCurrent = null;
-              fn(results.segmentationMask);
-            }
-          });
-          seg.initialize().then(() => {
-            mpSegmenter = seg;
-            resolve(seg);
-          }).catch(() => resolve(null));
-        } catch (err) {
-          resolve(null);
-        }
-      });
-      return mpReadyPromise;
+        });
+        mpSegmenter = seg;
+        return seg;
+      } catch (err) {
+        return null;
+      }
     }
 
     async function computeNeuralMaskCanvas(sourceCanvas) {
-      const seg = await initMediaPipeSegmenter();
+      const seg = getMediaPipeSegmenter();
       if (!seg) return null;
       return new Promise((resolve) => {
         let timedOut = false;
@@ -782,34 +770,57 @@
           timedOut = true;
           mpResolveCurrent = null;
           resolve(null);
-        }, 6000);
+        }, 8000);
 
         mpResolveCurrent = (maskImg) => {
           if (timedOut) return;
           clearTimeout(timer);
           if (!maskImg) { resolve(null); return; }
+
           const mc = document.createElement('canvas');
           mc.width = sourceCanvas.width;
           mc.height = sourceCanvas.height;
           const mctx = mc.getContext('2d');
+          mctx.clearRect(0, 0, mc.width, mc.height);
           mctx.drawImage(maskImg, 0, 0, mc.width, mc.height);
 
-          // Check if a person/foreground was actually detected (> 2.5% of image area)
-          const data = mctx.getImageData(0, 0, mc.width, mc.height).data;
+          // MediaPipe's segmentationMask stores the person probability in the ALPHA channel (d[i+3])
+          // on WebGL backends, or in the RED channel (d[i]) on CPU backends.
+          // We inspect both channels and normalize the mask into R=G=B=val, A=255!
+          const imgData = mctx.getImageData(0, 0, mc.width, mc.height);
+          const d = imgData.data;
+
+          let minA = 255, maxA = 0, minR = 255, maxR = 0;
+          for (let i = 0; i < d.length; i += 16) {
+            const r = d[i], a = d[i + 3];
+            if (a < minA) minA = a;
+            if (a > maxA) maxA = a;
+            if (r < minR) minR = r;
+            if (r > maxR) maxR = r;
+          }
+
+          const useAlpha = (maxA - minA) >= (maxR - minR);
           let fgCount = 0;
           const total = mc.width * mc.height;
-          for (let i = 0; i < data.length; i += 16) {
-            if (data[i] > 128) fgCount++;
+
+          for (let i = 0; i < d.length; i += 4) {
+            const val = useAlpha ? d[i + 3] : d[i];
+            if (val > 110) fgCount++;
+            d[i] = val;
+            d[i + 1] = val;
+            d[i + 2] = val;
+            d[i + 3] = 255;
           }
-          const ratio = (fgCount * 4) / total;
-          if (ratio < 0.025) {
-            resolve(null); // Not a portrait/person, fallback to edge flood-fill or Deep AI
+
+          if (fgCount / total < 0.015) {
+            resolve(null);
           } else {
+            mctx.putImageData(imgData, 0, 0);
             resolve(mc);
           }
         };
 
-        seg.send({ image: sourceCanvas }).catch(() => {
+        Promise.resolve(seg.send({ image: sourceCanvas })).catch(() => {
           clearTimeout(timer);
           mpResolveCurrent = null;
           resolve(null);
@@ -822,7 +833,7 @@
     async function runDeepAiBackgroundRemoval(sourceCanvas, onProgressText) {
       try {
         if (!imglyRemoveBg) {
-          if (onProgressText) onProgressText('Loading Deep AI neural model (first run takes ~5s)...');
+          if (onProgressText) onProgressText('✨ Loading Deep AI neural network...');
           const mod = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
           imglyRemoveBg = mod.removeBackground || mod.default;
         }
@@ -870,13 +881,11 @@
       const dst = outImageData.data;
 
       if (settings.mode === 'AUTO_SMART' && deepAiCanvas) {
-        // Use Deep AI result directly
-        const dCtx = deepAiCanvas.getContext('2d');
         const dCanvasScaled = document.createElement('canvas');
         dCanvasScaled.width = width;
         dCanvasScaled.height = height;
         const dsCtx = dCanvasScaled.getContext('2d');
-        if (settings.featherRadius > 0) {
+        if (settings.featherRadius > 1) {
           dsCtx.filter = `blur(${Math.max(0, settings.featherRadius - 1)}px)`;
         }
         dsCtx.drawImage(deepAiCanvas, 0, 0, width, height);
@@ -889,24 +898,22 @@
           dst[i + 3] = settings.invertMask ? (255 - a) : a;
         }
       } else if (settings.mode === 'AUTO_SMART' && aiMaskCanvas) {
-        // Use Google MediaPipe Neural Portrait Mask!
-        // Apply user feathering and sensitivity threshold to the neural mask
+        // Use Google MediaPipe Normalized Grayscale Mask (R=G=B=mask, A=255)
         const mCanvas = document.createElement('canvas');
         mCanvas.width = width;
         mCanvas.height = height;
         const mCtx = mCanvas.getContext('2d');
         if (settings.featherRadius > 0) {
-          mCtx.filter = `blur(${settings.featherRadius * 1.2}px)`;
+          mCtx.filter = `blur(${settings.featherRadius * 1.25}px)`;
         }
         mCtx.drawImage(aiMaskCanvas, 0, 0, width, height);
         const maskPixels = mCtx.getImageData(0, 0, width, height).data;
 
-        // Sensitivity (5..95): 50 is balanced cutoff (115). Higher sensitivity cuts tighter.
-        const cutoff = Math.max(25, Math.min(220, Math.round((settings.tolerance / 100) * 180 + 25)));
-        const band = Math.max(18, settings.featherRadius * 14 + 20);
+        const cutoff = Math.max(25, Math.min(225, Math.round((settings.tolerance / 100) * 180 + 25)));
+        const band = Math.max(16, settings.featherRadius * 14 + 18);
 
         for (let i = 0; i < src.length; i += 4) {
-          const maskVal = maskPixels[i]; // Red channel of segmentation mask (0..255)
+          const maskVal = maskPixels[i]; // Guaranteed normalized [0..255]
           let alpha;
           if (maskVal >= cutoff + band) {
             alpha = 255;
@@ -923,8 +930,6 @@
       } else if (settings.mode === 'HIGH_CONTRAST') {
         processHighContrast(src, dst, width, height, settings);
       } else {
-        // Border-Connected Flood Fill (for Studio/Color mode and synthetic/product shapes)
-        // NEVER punches holes inside faces, eyes, eyebrows, or beards because it only flood-fills from the outer border!
         processBorderFloodFill(src, dst, width, height, settings);
       }
 
@@ -941,7 +946,6 @@
       const visited = new Uint8Array(totalPixels);
       const isBg = new Uint8Array(totalPixels);
 
-      // Copy RGB and initialize alpha = 255 (protect all interior subject pixels by default!)
       for (let i = 0; i < totalPixels * 4; i += 4) {
         dst[i] = src[i];
         dst[i + 1] = src[i + 1];
@@ -949,27 +953,26 @@
         dst[i + 3] = 255;
       }
 
-      const globalTol = (settings.tolerance / 100) * 115 + 15;
-      const stepTol = Math.max(12, (settings.tolerance / 100) * 42 + 8);
+      const globalTol = (settings.tolerance / 100) * 110 + 15;
+      const stepTol = Math.max(10, (settings.tolerance / 100) * 38 + 8);
 
       const queue = new Int32Array(totalPixels);
       let head = 0, tail = 0;
 
-      // Seed colour from sampledColor or outer border pixels
       let seedR = 0, seedG = 0, seedB = 0;
       if (settings.sampledColor) {
         seedR = settings.sampledColor[0];
         seedG = settings.sampledColor[1];
         seedB = settings.sampledColor[2];
       } else {
+        // Sample TOP corners and TOP edge only (never bottom edge where a subject's torso sits)
         let sumR = 0, sumG = 0, sumB = 0, cnt = 0;
         for (let x = 0; x < width; x += 4) {
           const iTop = x * 4;
-          const iBot = ((height - 1) * width + x) * 4;
-          sumR += src[iTop] + src[iBot];
-          sumG += src[iTop + 1] + src[iBot + 1];
-          sumB += src[iTop + 2] + src[iBot + 2];
-          cnt += 2;
+          sumR += src[iTop];
+          sumG += src[iTop + 1];
+          sumB += src[iTop + 2];
+          cnt++;
         }
         seedR = Math.round(sumR / cnt);
         seedG = Math.round(sumG / cnt);
@@ -983,29 +986,28 @@
         queue[tail++] = idx;
       }
 
-      // Enqueue outer perimeter pixels that match background characteristics
+      // Enqueue top, left, and right border pixels matching the background seed
       for (let x = 0; x < width; x++) {
         const topIdx = x;
-        const botIdx = (height - 1) * width + x;
-        if (!settings.sampledColor || colorDistIdx(src, topIdx * 4, seedR, seedG, seedB) <= globalTol * 1.3) {
+        if (colorDistIdx(src, topIdx * 4, seedR, seedG, seedB) <= globalTol * 1.25) {
           pushPixel(topIdx);
         }
-        if (!settings.sampledColor || colorDistIdx(src, botIdx * 4, seedR, seedG, seedB) <= globalTol * 1.3) {
+        const botIdx = (height - 1) * width + x;
+        if (colorDistIdx(src, botIdx * 4, seedR, seedG, seedB) <= globalTol) {
           pushPixel(botIdx);
         }
       }
       for (let y = 1; y < height - 1; y++) {
         const leftIdx = y * width;
         const rightIdx = y * width + (width - 1);
-        if (!settings.sampledColor || colorDistIdx(src, leftIdx * 4, seedR, seedG, seedB) <= globalTol * 1.3) {
+        if (colorDistIdx(src, leftIdx * 4, seedR, seedG, seedB) <= globalTol * 1.2) {
           pushPixel(leftIdx);
         }
-        if (!settings.sampledColor || colorDistIdx(src, rightIdx * 4, seedR, seedG, seedB) <= globalTol * 1.3) {
+        if (colorDistIdx(src, rightIdx * 4, seedR, seedG, seedB) <= globalTol * 1.2) {
           pushPixel(rightIdx);
         }
       }
 
-      // Also if user explicitly tapped a color with eyedropper, seed from matching pixels near that color
       if (settings.sampledColor && settings.eyedropperPoint) {
         const ex = Math.min(width - 1, Math.max(0, Math.round(settings.eyedropperPoint.x * width)));
         const ey = Math.min(height - 1, Math.max(0, Math.round(settings.eyedropperPoint.y * height)));
@@ -1034,11 +1036,9 @@
           const n4 = nIdx * 4;
           const nr = src[n4], ng = src[n4 + 1], nb = src[n4 + 2];
 
-          // Step color difference to neighbor
           const sr = nr - cr, sg = ng - cg, sb = nb - cb;
           const stepDistSq = sr * sr + sg * sg + sb * sb;
 
-          // Global difference to border seed
           const gr = nr - seedR, gg = ng - seedG, gb = nb - seedB;
           const globalDistSq = gr * gr + gg * gg + gb * gb;
 
@@ -1050,7 +1050,6 @@
         }
       }
 
-      // Compute soft feathered alpha along the boundary of the flood-filled mask
       const feather = Math.max(1, Math.round(settings.featherRadius));
       for (let y = 0; y < height; y++) {
         const rowOffset = y * width;
@@ -1059,7 +1058,6 @@
           let alpha = isBg[idx] ? 0 : 255;
 
           if (feather > 0 && x >= feather && x < width - feather && y >= feather && y < height - feather) {
-            // Check 4-directional feather neighborhood for anti-aliased edge
             const b1 = isBg[idx - feather];
             const b2 = isBg[idx + feather];
             const b3 = isBg[idx - feather * width];
@@ -1168,7 +1166,7 @@
         color: '#FFFFFF'
       },
       strokes: [],
-      splitView: false, // Default to showing the full clean cutout immediately!
+      splitView: false,
       splitFraction: 0.5,
       zoom: 1,
       eyedropperMode: false,
@@ -1253,10 +1251,19 @@
 
       const t0 = performance.now();
       if (!isSynthetic) {
-        // Run Google MediaPipe Neural Segmentation automatically on uploaded photos!
+        // Tier 1: Run Google MediaPipe Neural Portrait Segmentation
         const mask = await computeNeuralMaskCanvas(previewOrig);
         if (mask) {
           state.currentItem.aiMaskCanvas = mask;
+        } else {
+          // Tier 2: If no portrait found (or MediaPipe unavailable), automatically run Deep AI HD!
+          const deepRes = await runDeepAiBackgroundRemoval(
+            previewOrig,
+            (msg) => { bannerText.textContent = msg; }
+          );
+          if (deepRes) {
+            state.currentItem.deepAiCanvas = deepRes;
+          }
         }
       }
       state.currentItem.timeMs = Math.max(1, Math.round(performance.now() - t0));
@@ -1381,7 +1388,6 @@
         out.height = highRes.height;
         const ctx = out.getContext('2d');
 
-        // Fill with selected background (default Pure White if grid was selected)
         if (state.selectedBackdrop.type === 'STUDIO_GRADIENT') {
           const grad = ctx.createRadialGradient(
             out.width / 2, out.height / 2, 10,
@@ -1644,8 +1650,16 @@
 
     // ==================== INITIALIZATION & EVENT LISTENERS ====================
     window.addEventListener('DOMContentLoaded', () => {
-      // Pre-warm MediaPipe AI segmenter in background
-      setTimeout(() => { initMediaPipeSegmenter(); }, 400);
+      // Clear any stale Service Worker caches from v1 so updates always show immediately
+      try {
+        if (window.caches) {
+          caches.keys().then(keys => {
+            keys.forEach(k => {
+              if (k !== 'cutout-pro-v3') caches.delete(k);
+            });
+          });
+        }
+      } catch (_) {}
 
       const listEl = document.getElementById('samplePresetsList');
       SAMPLE_PRESETS.forEach(preset => {
@@ -1728,7 +1742,7 @@
           recomputeSinglePreview();
           showToast('Deep AI HD background removal complete!');
         } else {
-          showToast('Using Neural AI / Edge Flood-Fill cutout');
+          showToast('Using Neural AI cutout');
         }
       });
 
